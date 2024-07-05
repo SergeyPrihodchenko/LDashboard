@@ -7,7 +7,7 @@ use App\Services\APIHook\Yandex;
 
 class Parser {
 
-    public static function fileRecording()
+    public static function fileRecordingDirect()
     {
         $yandex = new Yandex($_SERVER['AUTH_TOKEN_DIRECT']);
 

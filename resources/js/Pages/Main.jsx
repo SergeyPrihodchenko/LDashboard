@@ -12,9 +12,9 @@ export default function Main({chartData}) {
         return data
     }
 
-    const [data, setData] = useState(parse(chartData))
+    const [data, setData] = useState(parse(chartData.chart))
     
-    console.log(chartData);
+    console.log(chartData.emailsCount);
     const chartRef = createRef(null)
     
     const load = (async function(data) {
@@ -27,7 +27,7 @@ export default function Main({chartData}) {
                         labels: data.map(row => row.date),
                         datasets: [
                             {
-                            label: 'Количества писем за пириоды',
+                            label: 'Количества писем за пириод',
                             data: data.map(row => row.count)
                             }
                         ]
