@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Chart\ChartWika;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -14,8 +15,5 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Main', []);
-});
-
+require __DIR__.'/chart.php';
 require __DIR__.'/auth.php';

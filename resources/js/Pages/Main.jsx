@@ -2,59 +2,33 @@ import { Link, Head } from '@inertiajs/react';
 import { createRef, useEffect, useState } from 'react';
 import Chart from 'chart.js/auto'
 
-export default function Main() {
+export default function Main({chartData}) {
 
+    const parse = (chartData) => {
+        const data = [];
+        for(let key in chartData) {
+            data.push({date: key, count: chartData[key]})
+        }
+        return data
+    }
+
+    const [data, setData] = useState(parse(chartData))
     
-
+    console.log(chartData);
     const chartRef = createRef(null)
     
-    const load = (async function() {
-                    const data = [
-                    { year: 2010, count: 10 },
-                    { year: 2011, count: 20 },
-                    { year: 2012, count: 15 },
-                    { year: 2013, count: 25 },
-                    { year: 2014, count: 22 },
-                    { year: 2015, count: 30 },
-                    { year: 2016, count: 28 },
-                    ];
-                    const data2 = [
-                    { year: 2010, count: 5 },
-                    { year: 2011, count: 10 },
-                    { year: 2012, count: 7 },
-                    { year: 2013, count: 12 },
-                    { year: 2014, count: 11 },
-                    { year: 2015, count: 15 },
-                    { year: 2016, count: 14 },
-                    ];
-                    const data3 = [
-                    { year: 2010, count: 20 },
-                    { year: 2011, count: 40 },
-                    { year: 2012, count: 30 },
-                    { year: 2013, count: 50 },
-                    { year: 2014, count: 44 },
-                    { year: 2015, count: 60 },
-                    { year: 2016, count: 58 },
-                    ];
+    const load = (async function(data) {
                 
                     new Chart(
                         chartRef.current,
                     {
                         type: 'line',
                         data: {
-                        labels: data.map(row => row.year),
+                        labels: data.map(row => row.date),
                         datasets: [
                             {
-                            label: 'Acquisitions by year',
+                            label: 'Количества писем за пириоды',
                             data: data.map(row => row.count)
-                            },
-                            {
-                                label: 'Acquisitions by year',
-                                data: data2.map(row => row.count)
-                            },
-                            {
-                                label: 'Acquisitions by year',
-                                data: data3.map(row => row.count)
                             }
                         ]
                         }
@@ -64,7 +38,7 @@ export default function Main() {
     
 
     useEffect(() => {
-        load()
+        load(data)
     }, [])
 
     return (
