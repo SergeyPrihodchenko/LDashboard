@@ -16,4 +16,5 @@ use Inertia\Inertia;
 */
 
 require __DIR__.'/chart.php';
+require __DIR__.'/mails.php';
 require __DIR__.'/auth.php';

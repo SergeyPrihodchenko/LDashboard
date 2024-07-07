@@ -10,5 +10,4 @@ class HylokInvoice extends Model
     use HasFactory;
 
     protected $table = 'fluidline_hylok_InvoiceList';
-    protected $primaryKey = 'client_mail';
 }

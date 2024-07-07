@@ -10,6 +10,5 @@ class SwageloInvoice extends Model
     use HasFactory;
 
     protected $table = 'fluidacy_swagelo_InvoiceList';
-    protected $primaryKey = 'client_mail';
     
 }

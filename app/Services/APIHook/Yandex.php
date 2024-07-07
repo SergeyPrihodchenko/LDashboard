@@ -6,7 +6,6 @@ use GuzzleHttp\Client;
 
 final class Yandex {
 
-    private Client $client;
     private const YANDEX_METRIC_URL = 'https://api-metrika.yandex.net/';
     private const YANDEX_DIRECT_URL = 'https://api.direct.yandex.com/json/v5/reports';
     private $dateFrom;
@@ -126,8 +125,8 @@ final class Yandex {
 
     private function fetchMetric(string $id, $counter = 1) 
     {
-        $this->client = new Client(['base_uri' => Yandex::YANDEX_METRIC_URL]);
-        $result = $this->client->request('GET', 'stat/v1/data', [
+        $client = new \GuzzleHttp\Client(['base_uri' => Yandex::YANDEX_METRIC_URL]);
+        $result = $client->request('GET', 'stat/v1/data', [
             'headers' => [
                 'Authorization' => $this->token,
                 'Content-Type' => 'application/x-yametrika+json'
@@ -155,25 +154,9 @@ final class Yandex {
         if($status != '200') {
 
             $counter = $counter + 1;
-            sleep(3);
+            sleep(1);
 
-            $result = $this->client->request('GET', 'stat/v1/data', [
-            'headers' => [
-                'Authorization' => $this->token,
-                'Content-Type' => 'application/x-yametrika+json'
-            ],
-            'query' => [
-                'accuracy' => 1,
-                'preset' => 'sources_search_phrases',
-                'ids' => $this->counter_id,
-                'metrics' => 'ym:s:visits,ym:s:users',
-                'date1' => $this->dateFrom,
-                'date2' => $this->dateTo,
-                'dimensions' => 'ym:s:clientID,ym:s:firstVisitDate,ym:s:startURL',
-                'filters' => "ym:s:clientID=={$id}",
-                'limit' => 10000
-            ]
-        ]);
+            $this->fetchMetric($id, $counter);
 
         }
 

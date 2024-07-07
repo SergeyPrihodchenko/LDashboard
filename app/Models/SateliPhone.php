@@ -10,5 +10,4 @@ class SateliPhone extends Model
     use HasFactory;
 
     protected $table = 'fluidline_sateli_InvoiceCallList';
-    protected $primaryKey = 'client_phone';
 }

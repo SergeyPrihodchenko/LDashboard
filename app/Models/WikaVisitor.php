@@ -10,5 +10,4 @@ class WikaVisitor extends Model
     use HasFactory;
 
     protected $table = 'fluidline_wika_visitors_info';
-    protected $primaryKey = 'client_id';
 }

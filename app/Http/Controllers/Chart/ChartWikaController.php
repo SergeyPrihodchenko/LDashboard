@@ -11,7 +11,7 @@ class ChartWikaController extends Controller
 {
     public function index()
     {
-        $data = WikaInvoice::all('invoice_date', 'invoice_status', 'client_mail_id')->unique('client_mail_id');
+        $data = WikaInvoice::select('invoice_date', 'invoice_status', 'client_mail_id')->distinct('client_mail_id')->get();
 
         $chartData = [];
         $fullEmail = 0;

@@ -10,7 +10,6 @@ class WikaInvoice extends Model
     use HasFactory;
 
     protected $table = 'fluidline_wika_InvoiceList';
-    protected $primaryKey = 'client_mail';
 
     public const CLIENT_LOGIN = 'av-wika-ads@yandex.ru';
 }
