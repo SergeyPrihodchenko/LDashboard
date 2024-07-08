@@ -1,9 +1,12 @@
 import { Link, Head } from '@inertiajs/react';
 import { createRef, useEffect, useState } from 'react';
 import Chart from 'chart.js/auto'
+import Guest from '@/Layouts/GuestLayout';
+import { Grid } from '@mui/material';
 
 export default function Main({chartData}) {
 
+    console.log(chartData.direct);
     const parse = (chartData) => {
         const data = [];
         for(let key in chartData) {
@@ -14,36 +17,47 @@ export default function Main({chartData}) {
 
     const [data, setData] = useState(parse(chartData.chart))
     
-    console.log(chartData.emailsCount);
+    console.log(chartData.generalData);
     const chartRef = createRef(null)
+
     
     const load = (async function(data) {
-                
-                    new Chart(
-                        chartRef.current,
+        new Chart(
+             chartRef.current,
+            {
+                type: 'line',
+                data: {
+                labels: data.map(row => row.date),
+                datasets: [
                     {
-                        type: 'line',
-                        data: {
-                        labels: data.map(row => row.date),
-                        datasets: [
-                            {
-                            label: 'Количества писем за пириод',
-                            data: data.map(row => row.count)
-                            }
-                        ]
-                        }
+                    label: 'Количества писем за пириод',
+                    data: data.map(row => row.count)
                     }
-                    );
-                });
-    
+                ],
+                }
+            }
+        );
+    });
+            
 
     useEffect(() => {
         load(data)
+        return () => {
+            chartRef.current.destroy();
+        };
     }, [])
 
     return (
-        <>
-            <div ><canvas style={{width: '800px', margin: '0 auto'}} onLoad={load} ref={chartRef} id="acquisitions"></canvas></div>
-        </>
+        <Guest>
+            <div><canvas style={{width: '1400px', height: '500px', margin: '0 auto'}} onLoad={load} ref={chartRef} id="acquisitions"></canvas></div>
+            <Grid container sx={{height: '350px', border: 'solid 1px black'}}>
+                <Grid item xs={4}>
+                    
+                </Grid>
+                <Grid item xs={8}>
+
+                </Grid>
+            </Grid>
+        </Guest>
     );
 }

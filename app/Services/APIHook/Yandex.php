@@ -2,8 +2,6 @@
 
 namespace App\Services\APIHook;
 
-use GuzzleHttp\Client;
-
 final class Yandex {
 
     private const YANDEX_METRIC_URL = 'https://api-metrika.yandex.net/';
@@ -33,7 +31,7 @@ final class Yandex {
                 ],
             'DateRangeType' => 'CUSTOM_DATE',
             'ReportType' => 'SEARCH_QUERY_PERFORMANCE_REPORT',
-            'FieldNames' => [ "CampaignId", "CampaignName", "AdGroupId", "AdGroupName", "AvgCpc", "Cost", "Date"],
+            'FieldNames' => ["Cost", "Date"],
             'ReportName' => "$uniqId",
             'Format' => 'TSV',
             'IncludeVAT' => 'YES',
@@ -63,7 +61,7 @@ final class Yandex {
 
         if($status == '202') {
 
-            sleep(1);
+            sleep(2);
 
             $request = $client->request('POST', Yandex::YANDEX_DIRECT_URL, [
                 'headers' => [
