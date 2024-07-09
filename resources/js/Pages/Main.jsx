@@ -98,6 +98,9 @@ export default function Main({chartData, generalData}) {
                         <Container>
                             <Typography variant='h3'>Директ</Typography>
                             <Typography>
+                               с {direct.fromDate} по {direct.toDate} 
+                            </Typography>
+                            <Typography>
                                 {direct.countCliks}
                             </Typography>
                             <Typography>

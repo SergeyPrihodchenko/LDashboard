@@ -78,24 +78,32 @@ class ChartWikaController extends Controller
     {
         $direct = Parser::fileReader();
 
-        if(!$direct) {
-          $result = $this->fetchDirect();
-          if(!$result) {
-            $this->fetchDirect();
-          } else {
-            return $result;
-          }
-        }
+        // if(!$direct) {
+        //   $result = $this->fetchDirect();
+        //   if(!$result) {
+        //     $this->fetchDirect();
+        //   } else {
+        //     return $result;
+        //   }
+        // }
 
         $sum = 0;
+
 
         foreach ($direct as $key => $value) {
             $sum += $value;
         }
 
+        $directKeys = array_keys($direct);
+
         $sum = number_format($sum, 2, '.', '');
 
+        $fromDate = $directKeys[0];
+        $toDate = $directKeys[count($directKeys) - 1];
+
         return [
+            'fromDate' => $fromDate,
+            'toDate' => $toDate,
             'sumPrice' => "общая сумма за переход: $sum",
             'countCliks' => 'общее количество переходов: ' . count($direct)
             ];
