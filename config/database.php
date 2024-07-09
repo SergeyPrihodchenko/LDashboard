@@ -16,6 +16,8 @@ return [
     */
 
     'default' => env('DB_CONNECTION', 'mysql'),
+    'sateli' => env('DB_CONNECTION_SATELI', 'mysql'),
+    'wika' => env('DB_CONNECTION_WIKA', 'mysql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,6 +53,44 @@ return [
             'database' => env('DB_DATABASE', 'forge'),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+        'sateli' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL_SATELI'),
+            'host' => env('DB_HOST_SATELI', '127.0.0.1'),
+            'port' => env('DB_PORT_SATELI', '3306'),
+            'database' => env('DB_DATABASE_SATELI', 'forge'),
+            'username' => env('DB_USERNAME_SATELI', 'forge'),
+            'password' => env('DB_PASSWORD_SATELI', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+        'wika' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL_WIKA'),
+            'host' => env('DB_HOST_WIKA', '127.0.0.1'),
+            'port' => env('DB_PORT_WIKA', '3306'),
+            'database' => env('DB_DATABASE_WIKA', 'forge'),
+            'username' => env('DB_USERNAME_WIKA', 'forge'),
+            'password' => env('DB_PASSWORD_WIKA', ''),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',

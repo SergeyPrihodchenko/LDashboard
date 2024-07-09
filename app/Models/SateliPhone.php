@@ -9,5 +9,7 @@ class SateliPhone extends Model
 {
     use HasFactory;
 
-    protected $table = 'fluidline_sateli_InvoiceCallList';
+    protected $connection = 'sateli';
+
+    protected $table = 'InvoiceCallList';
 }
