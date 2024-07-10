@@ -22,7 +22,7 @@ class MailsController extends Controller
 
     public function indexSwagelo()
     {
-        $data = SwageloInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get()->toArray();
+        $data = SwageloInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
 
         return Inertia::render('Mails', ['data' => ['rows' => $data, 'title' => 'Swagelo']]);
     }
@@ -38,7 +38,7 @@ class MailsController extends Controller
     {
         $mail = $request->post('mail');
 
-        $data1C = WikaInvoice::select('client_id', 'invoice_id', 'invoice_status', 'invoice_date', 'invoice_price', 'client_code')->where('client_mail', $mail)->distinct()->get();
+        $data1C = WikaInvoice::select('client_id', 'invoice_id', 'invoice_status', 'invoice_date', 'invoice_price', 'client_code', 'client_mail')->where('client_mail', $mail)->distinct()->get();
 
         $ym_uid = WikaVisitor::select('_ym_uid')->where('client_id', $data1C[0]['client_id'])->limit(1)->get();
 
@@ -54,9 +54,9 @@ class MailsController extends Controller
                 $data['data'][date("Y-m-d", strtotime($el['invoice_date']))][] = $el;
             }
 
-            $data['clint_code'] = $data1C[0]['client_code'];
-            $data['clint_mail'] = $data1C[0]['client_mail'];
-            $data['clint_id'] = $data1C[0]['client_id'];
+            $data['client_code'] = $data1C[0]['client_code'];
+            $data['client_mail'] = $data1C[0]['client_mail'];
+            $data['client_id'] = $data1C[0]['client_id'];
             $data['sum_price'] = $sumPrice;
 
             return $data;
@@ -71,11 +71,11 @@ class MailsController extends Controller
             $data['data'][date("Y-m-d", strtotime($el['invoice_date']))][] = $el;
         }
 
-        $data['clint_code'] = $data1C[0]['client_code'];
-        $data['clint_mail'] = $data1C[0]['client_mail'];
-        $data['clint_id'] = $data1C[0]['client_id'];
+        $data['client_code'] = $data1C[0]['client_code'];
+        $data['client_mail'] = $data1C[0]['client_mail'];
+        $data['client_id'] = $data1C[0]['client_id'];
         $data['sum_price'] = $sumPrice;
-        $data['clint_ym_uid'] = $ym_uid[0]['_ym_uid'];
+        $data['client_ym_uid'] = $ym_uid[0]['_ym_uid'];
 
         $yandex = new Yandex($_SERVER['AUTH_TOKEN_METRIC'], $_SERVER['COUNTER_ID_METRIC']);
 

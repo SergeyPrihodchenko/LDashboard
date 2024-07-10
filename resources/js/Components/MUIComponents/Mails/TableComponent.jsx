@@ -8,7 +8,6 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import ModalComponent from './ModalComponent';
-import { router } from '@inertiajs/react';
 import axios from 'axios';
 
 const columns = [
@@ -100,12 +99,32 @@ export default function TableComponent({data}) {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [rows, setRows] = React.useState(converter(data.rows))
     const [open, setOpen] = React.useState(false);
-    const [dataModal, setDataModal] = React.useState('');
+    const [dataModal, setDataModal] = React.useState({
+      headers: {
+        title: data.title,
+        code: '',
+        id: '',
+        mail: '',
+        ym_uid: '',
+        sumPrice: ''
+      },
+      data: {}
+    });
     const [skeleton, setSkeleton] = React.useState(false);
 
     const handleClose = () => {
       setOpen(false)
-      setDataModal('')
+      setDataModal({
+        headers: {
+          title: data.title,
+          code: '',
+          id: '',
+          mail: '',
+          ym_uid: '',
+          sumPrice: ''
+        },
+        data: {}
+      })
     };
 
     const fetch = (mail) => {
@@ -120,7 +139,18 @@ export default function TableComponent({data}) {
       .then(res => {
         console.log(res.data);
         setSkeleton(true)
-        setDataModal(res.data)
+        setDataModal({
+          ...dataModal, 
+          data: res.data.data,
+          headers: {
+            title: dataModal.headers.title,
+            code: res.data.client_code,
+            id: res.data.client_id,
+            mail: res.data.client_mail,
+            ym_uid: res.data.client_ym_uid ? res.data.client_ym_uid : 'отсутствует',
+            sumPrice: res.data.sum_price
+          }
+        })
       })
       .catch(err => {
         console.log(err);
@@ -138,7 +168,7 @@ export default function TableComponent({data}) {
     };
 
     return (
-        <Paper sx={{ width: '100%' }}>
+        <Paper sx={{ width: '100%', margin: '0 auto'}}>
           <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
@@ -190,7 +220,7 @@ export default function TableComponent({data}) {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
         />
-        <ModalComponent dataModal={dataModal} handleClose={handleClose} open={open} skeleton={skeleton} title={data.title}/>
+        <ModalComponent dataModal={dataModal} handleClose={handleClose} open={open} skeleton={skeleton}/>
     </Paper>
   );    
 }

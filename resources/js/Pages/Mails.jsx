@@ -1,21 +1,19 @@
-import ModalComponent from "@/Components/MUIComponents/Mails/ModalComponent";
+import ControlPanelComponent from "@/Components/Mails/ControlPanelComponent";
 import TableComponent from "@/Components/MUIComponents/Mails/TableComponent"
+import Guest from "@/Layouts/GuestLayout";
+import { Container } from "@mui/material";
 
 const Emails = ({data}) => {
 
     console.log(data);
 
     return (
-        <>
-        <div className="main_block">
-            <div className="table_panel">
-
-            </div>
-            <div className="table_block">
+        <Guest>
+            <ControlPanelComponent/>
+            <Container maxWidth={'1600px'}>
                 <TableComponent data={data}/>
-            </div>
-        </div>
-        </>
+            </Container>
+        </Guest>
     )
 }
 

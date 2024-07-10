@@ -1,17 +1,27 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link } from '@inertiajs/react';
+import { Grid } from '@mui/material';
 
 export default function Guest({ children }) {
     return (
-        <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
-            <div>
-                <Link href="/">
-                </Link>
-            </div>
-
-            <div>
-                {children}
-            </div>
-        </div>
+        <Grid container sx={{maxWidth: '1600px', width: '100%', padding: '0 10px', margin: '0 auto'}}>
+            <Grid item sx={{ width: '100%'}}>
+                <Grid container sx={{width: '100%'}}>
+                    <Grid item xs={12}>
+                        <h1>header</h1>
+                    </Grid>
+                </Grid>
+                <Grid container sx={{width: '100%'}}>
+                    <Grid item xs={12} sx={{margin: '0 auto'}}>
+                        {children}
+                    </Grid>
+                </Grid>
+                <Grid container sx={{width: '100%'}}>
+                    <Grid item xs={12}>
+                        <h1>footer</h1>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
     );
 }

@@ -5,70 +5,84 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import { Container, Grid, Skeleton, Typography } from '@mui/material';
 
-export default function ModalComponent({open, handleClose, dataModal, skeleton, title}) {
+export default function ModalComponent({open, handleClose, dataModal, skeleton, data}) {
 
-    console.log(dataModal.data);
+    console.log(dataModal);
 
     const render = React.useCallback((obj) => {
         const html = [];
         for(let key in obj) {
 
             html.push((
-                <Grid container>
+                <Grid container className='card_group'>
                     <Grid item xs={12}>
-                        <Typography variant='h2'>
+                        <Typography variant='h4'>
                             {key}
                         </Typography>
                     </Grid>
-                    <Grid container>
+                    <Grid container className='card_group_items'>
                         {
                             obj[key].map((elem, i) => {
+                                let status = ''
+                                switch (elem.invoice_status) {
+                                    case 0:
+                                        status = 'счет создан'
+                                        break;
+                                    case 1:
+                                        status = 'счет выставлен'
+                                        break;
+                                    case 2:
+                                        status = 'счет опласен'
+                                        break;
+                                }
                                 if(elem.title == '1С') {
                                     return (
-                                        <Grid container key={i + elem.invoice_date}>
+                                        <Grid className='card' container key={i + elem.invoice_date}>
                                             <Grid item xs={12}>
                                             <Container sx={{display: 'flex', flexDirection: 'column'}}>
-                                                <Typography variant='h3'>
+                                                <Typography variant='h5'>
                                                     {elem.title}
                                                 </Typography>
-                                                <Typography variant='p'>
-                                                    {elem.invoice_status}
+                                                <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>Статус заказа: </span><span>{status}</span>
                                                 </Typography>
-                                                <Typography variant='p'>
-                                                    {elem.invoice_price}
+                                                <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>Сумма заказа: </span><span>{elem.invoice_price}</span>
                                                 </Typography>
-                                                <Typography variant='p'>
-                                                    {elem.invoice_date}
+                                                <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>Дата заказа: </span><span>{elem.invoice_date}</span>
                                                 </Typography>
                                             </Container>
                                             </Grid>
                                         </Grid>
+
                                     )
                                 } else {
-                                    return ( <Grid container key={i + elem.invoice_date}>
-                                            <Grid item xs={12}>
-                                            <Container sx={{display: 'flex', flexDirection: 'column'}}>
-                                                <Typography variant='h3'>
-                                                    {elem.title}
-                                                </Typography>
-                                                <Typography variant='p'>
-                                                    {elem.date}
-                                                </Typography>
-                                                <Typography variant='p'>
-                                                    {elem.url}
-                                                </Typography>
-                                                <Typography variant='p'>
-                                                    {elem.favicon}
-                                                </Typography>
-                                                <Typography variant='p'>
-                                                    посещения: {elem.meric_visits}
-                                                </Typography>
-                                                <Typography variant='p'>
-                                                    пользователи: {elem.meric_users}
-                                                </Typography>
-                                            </Container>
-                                            </Grid>
+                                    return ( 
+                                    <Grid className='card' container key={i}>
+                                        <Grid item xs={12}>
+                                        <Container sx={{display: 'flex', flexDirection: 'column'}}>
+                                            <Typography variant='h5'>
+                                                {elem.title}
+                                            </Typography>
+                                            <Typography className='card_text' variant='p'>
+                                               <span className='titile_header'>Дата просмотра: </span><span>{elem.date}</span>
+                                            </Typography>
+                                            <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>Просмотр: </span><span>{elem.url}</span>
+                                            </Typography>
+                                            <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>домен: </span><span>{elem.favicon}</span>
+                                            </Typography>
+                                            <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>посещения: </span><span>{elem.meric_visits}</span>
+                                            </Typography>
+                                            <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>пользователи: </span><span>{elem.meric_users}</span>
+                                            </Typography>
+                                        </Container>
                                         </Grid>
+                                    </Grid>
                                    )
                                 }
                             })
@@ -80,6 +94,7 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
         console.log(html);
         return html
     })
+
   return (
     <React.Fragment>
       <Dialog
@@ -87,35 +102,48 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        maxWidth='xl'
       >
         <DialogContent>
-            {
-            !skeleton ?
-            <>
-            <Skeleton variant="rectangular" width={210} height={60} />
-            <Skeleton variant="rounded" width={210} height={60} />
-            </> : ''
-            }
            <Grid container spacing={2}>
-                <Grid item xs={4}>
-                    <Typography variant='p' sx={{display: 'block'}}>
-                        {title}
-                    </Typography>
-                    <Typography variant='p' sx={{display: 'block'}}>
-                        {title}
-                    </Typography>
-                    <Typography variant='p' sx={{display: 'block'}}>
-                        {title}
-                    </Typography>
-                    <Typography variant='p' sx={{display: 'block'}}>
-                        {title}
-                    </Typography>
-                    <Typography variant='p' sx={{display: 'block'}}>
-                        {title}
-                    </Typography>
+                <Grid item xs={4} sx={{width: '600px', borderRight: 'solid 1px'}}>
+                    <Container sx={{width: 500, position: 'fixed', '&,css-1xgtf4e-MuiContainer-root': {padding: 0}}}>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>Имя: </p>
+                            <p>{dataModal.headers.title}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>Код клиента: </p>
+                            <p>{dataModal.headers.code}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>Электронная почта: </p>
+                            <p>{dataModal.headers.mail}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>ID клиента: </p>
+                            <p>{dataModal.headers.id}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>Яндекс ID клиента: </p>
+                            <p>{dataModal.headers.ym_uid}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>Сумма оплаты: </p>
+                            <p>{dataModal.headers.sumPrice}</p>
+                        </Container>
+                    </Container>
                 </Grid>
                 <Grid item xs={8}>
-                    {dataModal ? render(dataModal.data) : ''}
+                {
+                    !skeleton ?
+                    <>
+                    <Skeleton variant="rectangular" width={500} height={260} />
+                    <br />
+                    <Skeleton variant="rounded" width={500} height={260} />
+                    </> : ''
+                }
+                {dataModal ? render(dataModal.data) : ''}
                 </Grid>
            </Grid>
         </DialogContent>

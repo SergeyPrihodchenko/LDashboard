@@ -1,3 +1,31 @@
-/* @tailwind base;
+@tailwind base;
 @tailwind components;
-@tailwind utilities; */
+@tailwind utilities;
+.titile_header {
+  color: rgb(130, 130, 130);
+  font-family: Inter;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15px;
+  letter-spacing: 0%;
+  text-align: left;
+}
+
+.card_group {
+  padding: 5px;
+  margin-bottom: 10px;
+  box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
+}
+.card_group .card_group_items {
+  padding: 5px;
+}
+.card_group .card_group_items .card {
+  margin-bottom: 10px;
+  border-left: 3px solid rgb(130, 130, 130);
+}
+.card_group .card_group_items .card .card_text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 350px;
+}/*# sourceMappingURL=app.css.map */
