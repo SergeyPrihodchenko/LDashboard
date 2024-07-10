@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SateliPhone;
 use App\Models\WikaInvoice;
 use App\Models\WikaPhone;
-use App\Services\APIHook\Yandex;
 use App\Services\Parser\Parser;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ChartWikaController extends Controller
@@ -24,30 +22,33 @@ class ChartWikaController extends Controller
             $haystack[$key] = $value['client_phone'];
         }
 
-        $wikaPhone = WikaPhone::select('contact_phone_number')->distinct()->get();
+        $wikaPhoneBy1C = WikaPhone::select('contact_phone_number')->distinct()->get();
 
-        $wikaCalls = [];
-        foreach ($wikaPhone as $value) {
+        $wikaPhone = [];
+        foreach ($wikaPhoneBy1C as $value) {
             $phone = $value['contact_phone_number'];
             $subPhone = mb_substr($phone, 1, strlen($phone) - 1);
             $key = array_search($subPhone, $haystack);
 
-            if(!empty($key)) {
-                $wikaCalls[] = $sateliPhone[$key];
+            if(!empty($key) && !empty($sateliPhone[$key])) {
+                $wikaPhone[] = $sateliPhone[$key];
             }
         }
 
-        $chartData = [];
-        $fullEmail = 0;
+        $entryPoints = [];
+
+        $chartMail = [];
+        $countMail = 0;
         $sumPriceForMails = 0.00;
 
         foreach ($dataWikaInvoice as $key => $value) {
             $dataWikaInvoice[$key]['invoice_date'] = date('Y-m-d', strtotime($value['invoice_date']));
-            $fullEmail++;
-            if(!isset($chartData[$value['invoice_date']])) {
-                $chartData[$value['invoice_date']] = 1;
+            $countMail++;
+            if(!isset($chartMail[$value['invoice_date']])) {
+                $entryPoints[] = date('Y-m-d', strtotime($value['invoice_date']));
+                $chartMail[$value['invoice_date']] = 1;
             } else {
-                $chartData[$value['invoice_date']]++;
+                $chartMail[$value['invoice_date']]++;
             }
             if($value['invoice_status'] == 2) {
                 $sumPriceForMails = $sumPriceForMails + $dataWikaInvoice[$key]['invoice_price'];
@@ -55,18 +56,62 @@ class ChartWikaController extends Controller
         }
 
         $sumPriceByCalls = 0.00;
-        foreach ($wikaCalls as $value) {
+        $chartPhone = [];
+        $countPhone = 0;
+
+        foreach ($wikaPhone as $key => $value) {
+            $countPhone++;
+            $wikaPhone[$key]['invoice_date'] = date('Y-m-d', strtotime($value['invoice_date']));
+            if(!isset($chartPhone[$value['invoice_date']])) {
+                $entryPoints[] = date('Y-m-d', strtotime($value['invoice_date']));
+                $chartPhone[$value['invoice_date']] = 1;
+            } else {
+                $chartPhone[$value['invoice_date']]++;
+            }
             if($value['invoice_status'] == 2) {
                 $sumPriceByCalls += $value['invoice_price'];
             }
         }
 
+        usort($entryPoints, function($a, $b) {
+            $dateA = strtotime($a);
+            $dateB = strtotime($b);
+
+            if ($dateA == $dateB) {
+                return 0;
+            } elseif ($dateA > $dateB) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+        $newEntryPoints = array_unique($entryPoints);
+
+        $newChartMail = [];
+        $newChartPhone = [];
+
+        foreach ($newEntryPoints as $point) {
+            if(isset($chartMail[$point])) {
+                $newChartMail[$point] = $chartMail[$point];
+            } else {
+                $newChartMail[$point] = 0;
+            }
+            if(isset($chartPhone[$point])) {
+                $newChartPhone[$point] = $chartPhone[$point];
+            } else {
+                $newChartPhone[$point] = 0;
+            }
+        }
+
         return Inertia::render('Main', [
-            'chartData' => $chartData,
+            'entryPoints' => $newEntryPoints,
+            'chartMail' => $newChartMail,
+            'chartPhone' => $newChartPhone,
+            'test' => ['phone' => $chartPhone, 'mail' => $chartMail],
             'generalData' => [
-                'countPhone' => $wikaCalls,
-                'countMails' => "общее количество писем: $fullEmail",
-                'countCalls' =>"общее количество звонков: " . count($wikaPhone),
+                'countMails' => "общее количество писем: $countMail",
+                'countCalls' =>"общее количество звонков: "  . $countPhone,
                 'sumPriceForCalls' => number_format($sumPriceByCalls, 2, '.', ''),
                 'sumPriceForMails' => number_format($sumPriceForMails, 2, '.', '')
             ]
@@ -78,17 +123,7 @@ class ChartWikaController extends Controller
     {
         $direct = Parser::fileReader();
 
-        // if(!$direct) {
-        //   $result = $this->fetchDirect();
-        //   if(!$result) {
-        //     $this->fetchDirect();
-        //   } else {
-        //     return $result;
-        //   }
-        // }
-
         $sum = 0;
-
 
         foreach ($direct as $key => $value) {
             $sum += $value;
@@ -104,8 +139,8 @@ class ChartWikaController extends Controller
         return [
             'fromDate' => $fromDate,
             'toDate' => $toDate,
-            'sumPrice' => "общая сумма за переход: $sum",
-            'countCliks' => 'общее количество переходов: ' . count($direct)
+            'sumPrice' => "общая сумма за клики : $sum",
+            'countCliks' => "общее количество кликов :" . count($direct)
             ];
     }
 }

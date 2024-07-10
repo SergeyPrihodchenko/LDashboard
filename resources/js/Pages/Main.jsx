@@ -6,7 +6,16 @@ import { Container, Grid, Skeleton, Typography } from '@mui/material';
 import CalendarComponent from '@/Components/MUIComponents/Mails/CalendarComponent';
 import axios from 'axios';
 
-export default function Main({chartData, generalData}) {
+const preparationOfPoints = (obj) => {
+    const arr = []
+    for(let key in obj) {
+        arr.push(obj[key])
+    }
+
+    return arr
+}
+
+export default function Main({chartPhone, chartMail, entryPoints, generalData, test}) {
 
     const parse = (chartData) => {
         const data = [];
@@ -16,16 +25,13 @@ export default function Main({chartData, generalData}) {
         return data
     }
 
-    const [data, setData] = useState(parse(chartData))
+    const [dataMail, setDataMail] = useState(parse(chartMail))
+    const [dataPhone, setDataPhone] = useState(parse(chartPhone))
     const [direct, setDirect] = useState(false)
-
-    console.log(generalData);
-
 
     const fetchDirect = () => {
         axios.post(route('wika.direct'))
         .then(async res => {
-            console.log(res.data);
             setDirect(res.data)
         })
         .catch(err => {
@@ -40,22 +46,24 @@ export default function Main({chartData, generalData}) {
         const dateString = e.year() + "-" + (e.month() + 1) + "-" + e.date()
     }
     
-    console.log(chartData);
     const chartRef = createRef(null)
 
-    
-    const load = (async function(data) {
+    const load = (async function(entryPoints, dataMail, dataPhone) {
         new Chart(
              chartRef.current,
             {
                 type: 'line',
                 data: {
-                labels: data.map(row => row.date),
+                labels: preparationOfPoints(entryPoints).map(point => point),
                 datasets: [
                     {
                     label: 'Количества писем за пириод',
-                    data: data.map(row => row.count)
-                    }
+                    data: dataMail.map(row => row.count)
+                    },
+                    {
+                    label: 'Количества звонков за пириод',
+                    data: dataPhone.map(row => row.count)
+                    },
                 ],
                 }
             }
@@ -64,7 +72,7 @@ export default function Main({chartData, generalData}) {
             
 
     useEffect(() => {
-        load(data)
+        load(entryPoints, dataMail, dataPhone)
         fetchDirect()
     }, [])
 
