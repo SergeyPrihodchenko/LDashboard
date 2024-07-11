@@ -9,6 +9,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import ModalComponent from './ModalComponent';
 import axios from 'axios';
+import { Typography } from '@mui/material';
 
 const columns = [
   { id: 'mail', label: 'Mail', minWidth: 170 },
@@ -173,8 +174,8 @@ export default function TableComponent({data}) {
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="left" colSpan={12}>
-                    {data.title}
+                  <TableCell size='string' align="left" colSpan={12}>
+                    <Typography variant='h3'>{data.title}</Typography>
                   </TableCell>
                 </TableRow>
                 <TableRow>
