@@ -17,21 +17,21 @@ class MailsController extends Controller
     {
         $data = WikaInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
 
-        return Inertia::render('Mails', ['data' => ['rows' => $data, 'title' => 'Wika']]);
+        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'Wika']]);
     }
 
     public function indexSwagelo()
     {
         $data = SwageloInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
 
-        return Inertia::render('Mails', ['data' => ['rows' => $data, 'title' => 'Swagelo']]);
+        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'Swagelo']]);
     }
 
     public function indexHylok()
     {
         $data = HylokInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
 
-        return Inertia::render('Mails', ['data' => ['rows' => $data, 'title' => 'Hylok']]);
+        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'Hylok']]);
     }
 
     public function wikaGeneral(Request $request)

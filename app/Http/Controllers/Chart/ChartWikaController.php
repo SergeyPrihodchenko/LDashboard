@@ -7,6 +7,7 @@ use App\Models\SateliPhone;
 use App\Models\WikaInvoice;
 use App\Models\WikaPhone;
 use App\Services\Parser\Parser;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ChartWikaController extends Controller
@@ -55,7 +56,7 @@ class ChartWikaController extends Controller
             }
         }
 
-        $sumPriceByCalls = 0.00;
+        $sumPriceForCalls = 0.00;
         $chartPhone = [];
         $countPhone = 0;
 
@@ -69,7 +70,7 @@ class ChartWikaController extends Controller
                 $chartPhone[$value['invoice_date']]++;
             }
             if($value['invoice_status'] == 2) {
-                $sumPriceByCalls += $value['invoice_price'];
+                $sumPriceForCalls += $value['invoice_price'];
             }
         }
 
@@ -104,19 +105,80 @@ class ChartWikaController extends Controller
             }
         }
 
-        return Inertia::render('Main', [
+        return Inertia::render('ChartPage', [
             'entryPoints' => $newEntryPoints,
             'chartMail' => $newChartMail,
             'chartPhone' => $newChartPhone,
-            'test' => ['phone' => $chartPhone, 'mail' => $chartMail],
             'generalData' => [
                 'countMails' => "общее количество писем: $countMail",
                 'countCalls' =>"общее количество звонков: "  . $countPhone,
-                'sumPriceForCalls' => number_format($sumPriceByCalls, 2, '.', ''),
+                'sumPriceForCalls' => number_format($sumPriceForCalls, 2, '.', ''),
                 'sumPriceForMails' => number_format($sumPriceForMails, 2, '.', '')
             ]
         ]);
 
+    }
+
+    public function dataWikaByDate(Request $request)
+    {
+        $validated = $request->validate([
+            'dateFrom' => 'required|date',
+            'dateTo' => 'required|date'
+        ]);
+
+        $dateFrom = date('Y-m-d', strtotime($validated['dateFrom']));
+        $dateTo = date('Y-m-d', strtotime($validated['dateTo']));
+
+        $dataWikaInvoice = WikaInvoice::select('invoice_date', 'invoice_status', 'client_mail_id', 'invoice_price')->where('invoice_date', '>', "$dateFrom 00:00:00", 'AND', 'invoice_date', '<', "$dateTo 23:59:59")->distinct()->get();
+
+        $sateliPhone = SateliPhone::select('client_phone', 'invoice_status', 'invoice_price', 'invoice_date')->get();
+
+        $haystack = [];
+        foreach ($sateliPhone as $key => $value) {
+            $haystack[$key] = $value['client_phone'];
+        }
+
+        $wikaPhoneBy1C = WikaPhone::select('contact_phone_number')->distinct()->get();
+
+        $wikaPhone = [];
+        foreach ($wikaPhoneBy1C as $value) {
+            $phone = $value['contact_phone_number'];
+            $subPhone = mb_substr($phone, 1, strlen($phone) - 1);
+            $key = array_search($subPhone, $haystack);
+
+            if(!empty($key) && !empty($sateliPhone[$key])) {
+                $wikaPhone[] = $sateliPhone[$key];
+            }
+        }
+
+        $countMail = 0;
+        $sumPriceForMails = 0.00;
+
+        foreach ($dataWikaInvoice as $key => $value) {
+            $countMail++;
+            if($value['invoice_status'] == 2) {
+                $sumPriceForMails += $dataWikaInvoice[$key]['invoice_price'];
+            }
+        }
+
+        $sumPriceForCalls = 0.00;
+        $countPhone = 0;
+
+        foreach ($wikaPhone as $key => $value) {
+            if(strtotime("$dateFrom 00:00:00") < strtotime($value['invoice_date']) && strtotime("$dateTo 23:59:59") > strtotime($value['invoice_date'])) {
+                $countPhone++;
+                if($value['invoice_status'] == 2) {
+                    $sumPriceForCalls += $value['invoice_price'];
+                }
+            }
+        }
+
+        return [
+                'countMails' => "общее количество писем: $countMail",
+                'countCalls' =>"общее количество звонков: "  . $countPhone,
+                'sumPriceForCalls' => number_format($sumPriceForCalls, 2, '.', ''),
+                'sumPriceForMails' => number_format($sumPriceForMails, 2, '.', '')
+            ];
     }
 
     public function fetchDirect()

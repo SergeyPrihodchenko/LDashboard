@@ -2,7 +2,7 @@ import { Link, Head } from '@inertiajs/react';
 import { createRef, useEffect, useState } from 'react';
 import Chart from 'chart.js/auto'
 import Guest from '@/Layouts/GuestLayout';
-import { Container, Grid, Skeleton, Typography } from '@mui/material';
+import { Alert, Box, Button, Container, Grid, Skeleton, Typography } from '@mui/material';
 import CalendarComponent from '@/Components/MUIComponents/Mails/CalendarComponent';
 import axios from 'axios';
 
@@ -15,7 +15,7 @@ const preparationOfPoints = (obj) => {
     return arr
 }
 
-export default function Main({chartPhone, chartMail, entryPoints, generalData, test}) {
+export default function ChartPage({chartPhone, chartMail, entryPoints, generalData}) {
 
     const parse = (chartData) => {
         const data = [];
@@ -25,9 +25,39 @@ export default function Main({chartPhone, chartMail, entryPoints, generalData, t
         return data
     }
 
+    const switchData = () => {
+
+        if((new Date(dateFrom)) > (new Date(dateTo))) {
+
+            setDateError(true)
+            return
+        }
+        setDateError(false)
+        const data = new FormData()
+        data.set('dateFrom', dateFrom)
+        data.set('dateTo', dateTo)
+
+        axios.post(route('chart.whika'), data)
+        .then(res => {
+            console.log(res.data);
+            // setInvoiceData({...invoiveData, 
+            //     countMails: res.data.countMails,
+            //     sumPriceForMails: res.data.sumPriceForMails,
+            //     countCalls: res.data.countCalls,
+            //     sumPriceForCalls: res.data.sumPriceForCalls
+            // })
+
+        })
+        .catch(err => console.log(err))
+    }
+
     const [dataMail, setDataMail] = useState(parse(chartMail))
     const [dataPhone, setDataPhone] = useState(parse(chartPhone))
     const [direct, setDirect] = useState(false)
+    const [dateFrom, setDateFrom] = useState('')
+    const [dateTo, setDateTo] = useState('')
+    const [invoiveData, setInvoiceData] = useState(generalData)
+    const [dateError, setDateError] = useState(false)
 
     const fetchDirect = () => {
         axios.post(route('wika.direct'))
@@ -40,10 +70,10 @@ export default function Main({chartPhone, chartMail, entryPoints, generalData, t
     }
 
     const fromDateChange = (e) => {
-        const dateString = e.year() + "-" + (e.month() + 1) + "-" + e.date()
+        setDateFrom(e.year() + "-" + (e.month() + 1) + "-" + e.date())
     }
     const toDateChange = (e) => {
-        const dateString = e.year() + "-" + (e.month() + 1) + "-" + e.date()
+        setDateTo(e.year() + "-" + (e.month() + 1) + "-" + e.date())
     }
     
     const chartRef = createRef(null)
@@ -57,11 +87,11 @@ export default function Main({chartPhone, chartMail, entryPoints, generalData, t
                 labels: preparationOfPoints(entryPoints).map(point => point),
                 datasets: [
                     {
-                    label: 'Количества писем за пириод',
+                    label: 'Количества писем за период',
                     data: dataMail.map(row => row.count)
                     },
                     {
-                    label: 'Количества звонков за пириод',
+                    label: 'Количества звонков за период',
                     data: dataPhone.map(row => row.count)
                     },
                 ],
@@ -85,20 +115,20 @@ export default function Main({chartPhone, chartMail, entryPoints, generalData, t
                        <Container>
                         <Typography variant='h3'>Письма</Typography>
                         <Typography>
-                                {generalData.countMails}
+                                {invoiveData.countMails}
                             </Typography>
                             <Typography>
-                                сумма оплаченных счетов: {generalData.sumPriceForMails}
+                                сумма оплаченных счетов: {invoiveData.sumPriceForMails}
                             </Typography>
                        </Container>
                        <hr />
                         <Container>
                             <Typography variant='h3'>Звонки</Typography>
                             <Typography>
-                                {generalData.countCalls}
+                                {invoiveData.countCalls}
                             </Typography>
                             <Typography>
-                                сумма оплаченных счетов: {generalData.sumPriceForCalls}
+                                сумма оплаченных счетов: {invoiveData.sumPriceForCalls}
                             </Typography>
                         </Container>
                         <hr />
@@ -119,13 +149,19 @@ export default function Main({chartPhone, chartMail, entryPoints, generalData, t
                     </Container>
                 </Grid>
                 <Grid item xs={8}>
-                    <Container sx={{display: 'flex', justifyContent: 'center'}}>
-                        <Container sx={{marginRight: '5px'}}>
-                            <CalendarComponent lable={'Начало периода'} dateChange={fromDateChange}/>
-                        </Container>
-                        <Container sx={{marginRight: '5px'}}>
-                            <CalendarComponent lable={'Конец периода'} dateChange={toDateChange}/>
-                        </Container>
+                    <Container sx={{display: 'flex', justifyContent: 'start'}}>
+                        <Box sx={{marginRight: '5px'}}>
+                            <Box>
+                                <CalendarComponent lable={'Начало периода'} dateChange={fromDateChange}/>
+                            </Box>
+                            <Box>
+                                <CalendarComponent lable={'Конец периода'} dateChange={toDateChange}/>
+                            </Box>
+                        </Box>
+                        <Box sx={{padding: '8px'}}>
+                            <Button variant='contained' onClick={switchData}>Send</Button>
+                            {dateError ? <Alert sx={{marginTop: '15px'}} severity='error'>Не корректный диапазон даты</Alert> : ''}
+                        </Box>
                     </Container>
                 </Grid>
             </Grid>

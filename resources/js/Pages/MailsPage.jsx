@@ -3,7 +3,7 @@ import TableComponent from "@/Components/MUIComponents/Mails/TableComponent"
 import Guest from "@/Layouts/GuestLayout";
 import { Container } from "@mui/material";
 
-const Emails = ({data}) => {
+const MailsPage = ({data}) => {
 
     console.log(data);
 
@@ -17,4 +17,4 @@ const Emails = ({data}) => {
     )
 }
 
-export default Emails
+export default MailsPage

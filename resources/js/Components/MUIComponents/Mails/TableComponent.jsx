@@ -169,7 +169,7 @@ export default function TableComponent({data}) {
 
     return (
         <Paper sx={{ width: '100%', margin: '0 auto'}}>
-          <TableContainer sx={{ maxHeight: 440 }}>
+          <TableContainer sx={{ maxHeight: 600 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -219,6 +219,7 @@ export default function TableComponent({data}) {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage={'Выводить по :'}
         />
         <ModalComponent dataModal={dataModal} handleClose={handleClose} open={open} skeleton={skeleton}/>
     </Paper>

@@ -32,7 +32,7 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
                                         status = 'счет выставлен'
                                         break;
                                     case 2:
-                                        status = 'счет опласен'
+                                        status = 'счет оплачен'
                                         break;
                                 }
                                 if(elem.title == '1С') {
@@ -107,7 +107,7 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
         <DialogContent>
            <Grid container spacing={2}>
                 <Grid item xs={4} sx={{width: '600px', borderRight: 'solid 1px'}}>
-                    <Container sx={{width: 500, position: 'fixed', '&,css-1xgtf4e-MuiContainer-root': {padding: 0}}}>
+                    <Container sx={{width: 500, position: 'fixed', '&, css-1xgtf4e-MuiContainer-root': {padding: 0}}}>
                         <Container sx={{marginBottom: 1.2}}>
                             <p className='titile_header'>Имя: </p>
                             <p>{dataModal.headers.title}</p>
