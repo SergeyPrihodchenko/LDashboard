@@ -40,12 +40,12 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
         axios.post(route('chart.whika'), data)
         .then(res => {
             console.log(res.data);
-            // setInvoiceData({...invoiveData, 
-            //     countMails: res.data.countMails,
-            //     sumPriceForMails: res.data.sumPriceForMails,
-            //     countCalls: res.data.countCalls,
-            //     sumPriceForCalls: res.data.sumPriceForCalls
-            // })
+            setInvoiceData({...invoiveData, 
+                countMails: res.data.countMails,
+                sumPriceForMails: res.data.sumPriceForMails,
+                countCalls: res.data.countCalls,
+                sumPriceForCalls: res.data.sumPriceForCalls
+            })
 
         })
         .catch(err => console.log(err))
@@ -109,7 +109,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
     return (
         <Guest>
             <div><canvas style={{width: '1400px', height: '500px', margin: '0 auto'}} onLoad={load} ref={chartRef} id="acquisitions"></canvas></div>
-            <Grid container sx={{border: 'solid 1px black'}}>
+            <Grid container sx={{borderTop: 'solid 1px', marginTop: 1.5, padding: 1}}>
                 <Grid item xs={4}>
                     <Container>
                        <Container>
@@ -159,7 +159,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                             </Box>
                         </Box>
                         <Box sx={{padding: '8px'}}>
-                            <Button variant='contained' onClick={switchData}>Send</Button>
+                            <Button variant='contained' color='primary' onClick={switchData}>Просмотреть</Button>
                             {dateError ? <Alert sx={{marginTop: '15px'}} severity='error'>Не корректный диапазон даты</Alert> : ''}
                         </Box>
                     </Container>

@@ -10,7 +10,7 @@ export default function Header() {
 
   return (
     <Box sx={{ width: '100%', height: 100, display: 'flex', alignItems: 'center', borderBottom: 'solid 1px'}}>
-        <ButtonGroup>
+        <ButtonGroup variant='contained'>
             <Link href={route('chart.wika')}><Button>Аналитика</Button></Link>
             <Link href={route('wika')}><Button>Список клиентов</Button></Link>
         </ButtonGroup>

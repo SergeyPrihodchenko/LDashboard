@@ -5,7 +5,7 @@ const ControlPanelComponent = () => {
     return (
         <Grid container sx={{padding: '10px'}}>
             <Grid item xs={12}>
-                <ButtonGroup variant="contained" size="large" aria-label="Large button group">
+                <ButtonGroup color="info" variant="contained" size="large" aria-label="Large button group">
                     <Link href={route('wika')}>
                         <Button>Wika</Button>
                     </Link>

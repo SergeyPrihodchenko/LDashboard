@@ -28,4 +28,9 @@
   align-items: center;
   justify-content: space-between;
   max-width: 830px;
+}
+
+.footer {
+  height: 75px;
+  background-color: black;
 }/*# sourceMappingURL=app.css.map */
