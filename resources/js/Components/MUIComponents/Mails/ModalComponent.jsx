@@ -7,8 +7,6 @@ import { Container, Grid, Skeleton, Typography } from '@mui/material';
 
 export default function ModalComponent({open, handleClose, dataModal, skeleton, data}) {
 
-    console.log(dataModal);
-
     const render = React.useCallback((obj) => {
         const html = [];
         for(let key in obj) {
@@ -91,7 +89,6 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
                 </Grid>
             ))
         }
-        console.log(html);
         return html
     })
 

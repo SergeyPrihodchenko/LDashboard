@@ -5,8 +5,6 @@ import { Container } from "@mui/material";
 
 const MailsPage = ({data}) => {
 
-    console.log(data);
-
     return (
         <Guest>
             <ControlPanelComponent/>

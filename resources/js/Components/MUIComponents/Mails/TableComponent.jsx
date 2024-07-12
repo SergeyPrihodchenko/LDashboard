@@ -138,7 +138,6 @@ export default function TableComponent({data}) {
 
       axios.post(route('wika.general'), data)
       .then(res => {
-        console.log(res.data);
         setSkeleton(true)
         setDataModal({
           ...dataModal, 
