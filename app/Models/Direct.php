@@ -26,7 +26,7 @@ class Direct extends Model
 
     static function checkUpdate(): bool
     {
-        $lastDate = self::select('date')->orderByPivot('id', 'desc')->limit(1)->get()[0]['date'];
+        $lastDate = self::select('date')->orderByDesc('id')->limit(1)->get()[0]['date'];
         $currentDate = date('Y-m-d');
 
         $dateDiff = date_diff(new \DateTime($lastDate), new \DateTime($currentDate));
