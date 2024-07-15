@@ -46,6 +46,9 @@ final class Yandex {
                 'Client-Login' => $clientLogin,
                 'Accept-Language' => 'ru',
                 'Content-Type' => 'application/json;charset=utf-8',
+                'skipReportHeader' => 'true',
+                'skipColumnHeader' => 'true',
+                'skipReportSummary' => 'true'
             ],
             'json' => $json
         ]);
@@ -70,6 +73,9 @@ final class Yandex {
                     'Client-Login' => $clientLogin,
                     'Accept-Language' => 'ru',
                     'Content-Type' => 'application/json;charset=utf-8',
+                    'skipReportHeader' => 'true',
+                    'skipColumnHeader' => 'true',
+                    'skipReportSummary' => 'true'
                 ],
                 'json' => $json
             ]);
@@ -95,6 +101,9 @@ final class Yandex {
                     'Client-Login' => $clientLogin,
                     'Accept-Language' => 'ru',
                     'Content-Type' => 'application/json;charset=utf-8',
+                    'skipReportHeader' => 'true',
+                    'skipColumnHeader' => 'true',
+                    'skipReportSummary' => 'true'
                 ],
                 'json' => $json
             ]);
@@ -116,6 +125,116 @@ final class Yandex {
             }
 
             $result = $this->fetchDirect($clientLogin, $uniqId, $counter);
+
+            return $result;
+        }
+    }
+    public function directUpdate(string $clientLogin, $id, $date, $counter = 1)
+    {
+        $uniqId = $id;
+
+        $json = [
+            'params' => [
+                'SelectionCriteria' => [
+                    'DateFrom' => $date,
+                    'DateTo' => $this->dateTo
+                ],
+            'DateRangeType' => 'CUSTOM_DATE',
+            'ReportType' => 'SEARCH_QUERY_PERFORMANCE_REPORT',
+            'FieldNames' => ["CampaignId", "CampaignName", "AdGroupId", "CampaignType", "AdGroupName", "AvgCpc", "Cost", "Date"],
+            'ReportName' => "$uniqId",
+            'Format' => 'TSV',
+            'IncludeVAT' => 'YES',
+            'IncludeDiscount' => 'NO'
+            ]
+        ];
+        $client = new \GuzzleHttp\Client();
+        $request = $client->request('POST', Yandex::YANDEX_DIRECT_URL, [
+            'headers' => [
+                'returnMoneyInMicros' => 'false',
+                'Authorization' => $this->token,
+                'Client-Login' => $clientLogin,
+                'Accept-Language' => 'ru',
+                'Content-Type' => 'application/json;charset=utf-8',
+                'skipReportHeader' => 'true',
+                'skipColumnHeader' => 'true',
+                'skipReportSummary' => 'true'
+            ],
+            'json' => $json
+        ]);
+
+        $status = $request->getStatusCode();
+
+        if($status == '200') {
+
+            $data = $request->getBody();
+            return $data;
+
+        }
+
+        if($status == '202') {
+
+            sleep(5);
+
+            $request = $client->request('POST', Yandex::YANDEX_DIRECT_URL, [
+                'headers' => [
+                    'returnMoneyInMicros' => 'false',
+                    'Authorization' => $this->token,
+                    'Client-Login' => $clientLogin,
+                    'Accept-Language' => 'ru',
+                    'Content-Type' => 'application/json;charset=utf-8',
+                    'skipReportHeader' => 'true',
+                    'skipColumnHeader' => 'true',
+                    'skipReportSummary' => 'true'
+                ],
+                'json' => $json
+            ]);
+
+            $status = $request->getStatusCode();
+
+            if($status == '200') {
+
+                $data = $request->getBody();
+                return $data;
+    
+            }
+        }
+
+        if ($status == '201') {
+            
+            sleep(5);
+
+            $request = $client->request('POST', Yandex::YANDEX_DIRECT_URL, [
+                'headers' => [
+                    'returnMoneyInMicros' => 'false',
+                    'Authorization' => $this->token,
+                    'Client-Login' => $clientLogin,
+                    'Accept-Language' => 'ru',
+                    'Content-Type' => 'application/json;charset=utf-8',
+                    'skipReportHeader' => 'true',
+                    'skipColumnHeader' => 'true',
+                    'skipReportSummary' => 'true'
+                ],
+                'json' => $json
+            ]);
+
+          $status = $request->getStatusCode();
+
+          if($status == '200') {
+
+            $data = $request->getBody();
+            return $data;
+
+            }
+        }
+
+        if($request->getStatusCode() != '200') {
+            $counter++;
+            if($counter > 3) {
+                return false;
+            }
+
+            $result = $this->directUpdate($clientLogin, $uniqId, $date, $counter);
 
             return $result;
         }

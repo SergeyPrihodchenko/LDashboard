@@ -110,8 +110,8 @@ class ChartWikaController extends Controller
             'chartMail' => $newChartMail,
             'chartPhone' => $newChartPhone,
             'generalData' => [
-                'countMails' => "общее количество писем: $countMail",
-                'countCalls' =>"общее количество звонков: "  . $countPhone,
+                'countMails' => $countMail,
+                'countCalls' => $countPhone,
                 'sumPriceForCalls' => number_format($sumPriceForCalls, 2, '.', ''),
                 'sumPriceForMails' => number_format($sumPriceForMails, 2, '.', '')
             ]
@@ -174,8 +174,8 @@ class ChartWikaController extends Controller
         }
 
         return [
-                'countMails' => "общее количество писем: $countMail",
-                'countCalls' =>"общее количество звонков: "  . $countPhone,
+                'countMails' => $countMail,
+                'countCalls' => $countPhone,
                 'sumPriceForCalls' => number_format($sumPriceForCalls, 2, '.', ''),
                 'sumPriceForMails' => number_format($sumPriceForMails, 2, '.', '')
             ];
@@ -201,8 +201,8 @@ class ChartWikaController extends Controller
         return [
             'fromDate' => $fromDate,
             'toDate' => $toDate,
-            'sumPrice' => "общая сумма за клики : $sum",
-            'countCliks' => "общее количество кликов :" . count($direct)
+            'sumPrice' => $sum,
+            'countCliks' => count($direct)
             ];
     }
 }

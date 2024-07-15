@@ -5,6 +5,7 @@ import Guest from '@/Layouts/GuestLayout';
 import { Alert, Box, Button, Container, Grid, Skeleton, Typography } from '@mui/material';
 import CalendarComponent from '@/Components/MUIComponents/Mails/CalendarComponent';
 import axios from 'axios';
+import ControlPanelComponent from '@/Components/Chart/ControlPanelComponent';
 
 const preparationOfPoints = (obj) => {
     const arr = []
@@ -108,61 +109,54 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
 
     return (
         <Guest>
+            <ControlPanelComponent/>
+            <hr />
+            <Grid item xs={8}>
+                <Container sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', gap: '10px'}}>
+                        <CalendarComponent lable={'Начало периода'} dateChange={fromDateChange}/>
+                        <CalendarComponent lable={'Конец периода'} dateChange={toDateChange}/>
+                        <Button variant='contained' color='primary' onClick={switchData}>Просмотреть</Button>
+                        {dateError ? <Alert severity='error'>Не корректный диапазон даты</Alert> : ''}
+                </Container>
+                <hr style={{marginTop: '15px'}}/>
+            </Grid>
             <div><canvas style={{width: '1400px', height: '500px', margin: '0 auto'}} onLoad={load} ref={chartRef} id="acquisitions"></canvas></div>
             <Grid container sx={{borderTop: 'solid 1px', marginTop: 1.5, padding: 1}}>
-                <Grid item xs={4}>
-                    <Container>
-                       <Container>
+                <Grid item xs={12}>
+                    <Box className='present_data_box'>
+                       <Box>
                         <Typography variant='h3'>Письма</Typography>
                         <Typography>
-                                {invoiveData.countMails}
+                                <span className='titile_header'>общее количество писем: </span>{invoiveData.countMails}
                             </Typography>
                             <Typography>
-                                сумма оплаченных счетов: {invoiveData.sumPriceForMails}
+                                <span className='titile_header'>сумма оплаченных счетов: </span>{invoiveData.sumPriceForMails}
                             </Typography>
-                       </Container>
-                       <hr />
-                        <Container>
+                       </Box>
+                        <Box>
                             <Typography variant='h3'>Звонки</Typography>
                             <Typography>
-                                {invoiveData.countCalls}
+                                <span className='titile_header'>общее количество звонков: </span>{invoiveData.countCalls}
                             </Typography>
                             <Typography>
-                                сумма оплаченных счетов: {invoiveData.sumPriceForCalls}
+                                <span className='titile_header'>сумма оплаченных счетов: </span>{invoiveData.sumPriceForCalls}
                             </Typography>
-                        </Container>
-                        <hr />
-                        {!direct ? <Skeleton width={600} height={250}/> : 
-                        <Container>
+                        </Box>
+                        {!direct ? <Box><Skeleton width={600} height={250}/></Box> : 
+                        <Box>
                             <Typography variant='h3'>Директ</Typography>
                             <Typography>
                                с {direct.fromDate} по {direct.toDate} 
                             </Typography>
                             <Typography>
-                                {direct.countCliks}
+                                <span className='titile_header'>общее количество кликов: </span>{direct.countCliks}
                             </Typography>
                             <Typography>
-                                {direct.sumPrice}
+                                <span className='titile_header'>общая сумма за клики: </span>{direct.sumPrice}
                             </Typography>
-                        </Container>
+                        </Box>
                         }
-                    </Container>
-                </Grid>
-                <Grid item xs={8}>
-                    <Container sx={{display: 'flex', justifyContent: 'start'}}>
-                        <Box sx={{marginRight: '5px'}}>
-                            <Box>
-                                <CalendarComponent lable={'Начало периода'} dateChange={fromDateChange}/>
-                            </Box>
-                            <Box>
-                                <CalendarComponent lable={'Конец периода'} dateChange={toDateChange}/>
-                            </Box>
-                        </Box>
-                        <Box sx={{padding: '8px'}}>
-                            <Button variant='contained' color='primary' onClick={switchData}>Просмотреть</Button>
-                            {dateError ? <Alert sx={{marginTop: '15px'}} severity='error'>Не корректный диапазон даты</Alert> : ''}
-                        </Box>
-                    </Container>
+                    </Box>
                 </Grid>
             </Grid>
         </Guest>

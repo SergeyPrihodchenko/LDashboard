@@ -103,7 +103,7 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
       >
         <DialogContent>
            <Grid container spacing={2}>
-                <Grid item xs={4} sx={{width: '600px', borderRight: 'solid 1px'}}>
+                <Grid item xs={4} sx={{width: '700px', borderRight: 'solid 1px', height: '350px'}}>
                     <Container sx={{width: 500, position: 'fixed', '&, css-1xgtf4e-MuiContainer-root': {padding: 0}}}>
                         <Container sx={{marginBottom: 1.2}}>
                             <p className='titile_header'>Имя: </p>
