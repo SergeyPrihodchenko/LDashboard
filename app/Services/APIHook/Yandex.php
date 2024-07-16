@@ -64,7 +64,7 @@ final class Yandex {
 
         if($status == '202') {
 
-            sleep(5);
+            sleep(3);
 
             $request = $client->request('POST', Yandex::YANDEX_DIRECT_URL, [
                 'headers' => [
@@ -92,7 +92,7 @@ final class Yandex {
 
         if ($status == '201') {
             
-            sleep(5);
+            sleep(3);
 
             $request = $client->request('POST', Yandex::YANDEX_DIRECT_URL, [
                 'headers' => [
@@ -132,16 +132,34 @@ final class Yandex {
     public function directUpdate(string $clientLogin, $id, $date, $counter = 1)
     {
         $uniqId = $id;
+        $dateFrom = $date;
 
         $json = [
             'params' => [
                 'SelectionCriteria' => [
-                    'DateFrom' => $date,
+                    'DateFrom' => $dateFrom,
                     'DateTo' => $this->dateTo
                 ],
             'DateRangeType' => 'CUSTOM_DATE',
             'ReportType' => 'SEARCH_QUERY_PERFORMANCE_REPORT',
-            'FieldNames' => ["CampaignId", "CampaignName", "AdGroupId", "CampaignType", "AdGroupName", "AvgCpc", "Cost", "Date"],
+            'FieldNames' => [
+                "CampaignId",
+                "CampaignName",
+                "AdGroupId",
+                "Query",
+                "Impressions",
+                "CampaignType",
+                "ConversionRate",
+                "Ctr", 
+                "AdGroupName",
+                "AvgPageviews",
+                "Clicks", 
+                "BounceRate",
+                "Criteria",
+                "AvgCpc",
+                "Cost",
+                "Date"
+                    ],
             'ReportName' => "$uniqId",
             'Format' => 'TSV',
             'IncludeVAT' => 'YES',
@@ -202,7 +220,7 @@ final class Yandex {
 
         if ($status == '201') {
             
-            sleep(5);
+            sleep(3);
 
             $request = $client->request('POST', Yandex::YANDEX_DIRECT_URL, [
                 'headers' => [
@@ -234,7 +252,7 @@ final class Yandex {
                 return false;
             }
 
-            $result = $this->directUpdate($clientLogin, $uniqId, $date, $counter);
+            $result = $this->directUpdate($clientLogin, $uniqId, $dateFrom, $counter);
 
             return $result;
         }

@@ -11,22 +11,39 @@ class Direct extends Model
 
     protected $table = 'direct';
 
-    protected $fillable = [
+    protected $fillable = [  
         'CampaignId',
         'CampaignName',
         'AdGroupId',
+        'Query',
+        'Impressions',
+        'CampaignType',
+        'ConversionRate',
+        'Ctr',
         'AdGroupName',
+        'AvgPageviews',
+        'Clicks',
+        'BounceRate',
+        'Criteria',
         'AvgCpc',
         'Cost',
-        'Date',
-        'CompaingType'
-    ];
+        'Date',  
+        ];
 
     public $timestamps = false;
 
-    static function checkUpdate(): bool
+    static function checkUpdate(): bool|string
     {
-        $lastDate = self::select('date')->orderByDesc('id')->limit(1)->get()[0]['date'];
+        $data = self::select('date')->orderByDesc('id')->limit(1)->get()->toArray();
+
+        $lastDate = '2024-01-01';
+        
+         if(isset($data[0]['date'])) {
+
+         $lastDate = $data[0]['date'];
+
+         }
+
         $currentDate = date('Y-m-d');
 
         $dateDiff = date_diff(new \DateTime($lastDate), new \DateTime($currentDate));

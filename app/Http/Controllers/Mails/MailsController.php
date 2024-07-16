@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mails;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\Test;
 use App\Models\HylokInvoice;
 use App\Models\SwageloInvoice;
 use App\Models\WikaInvoice;
