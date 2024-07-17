@@ -12,23 +12,20 @@ class Direct extends Model
     protected $table = 'direct';
 
     protected $fillable = [  
-        'CampaignId',
-        'CampaignName',
-        'AdGroupId',
-        'Query',
-        'Impressions',
-        'CampaignType',
-        'ConversionRate',
-        'Ctr',
-        'AdGroupName',
-        'AvgPageviews',
-        'Clicks',
-        'BounceRate',
-        'Criteria',
-        'AvgCpc',
-        'Cost',
-        'Date',  
-        ];
+        "CampaignId",
+        "LocationOfPresenceId",
+        "LocationOfPresenceName",
+        "CampaignName",
+        "Device",
+        "AdGroupId",
+        "ConversionRate",
+        "Ctr",
+        "AdGroupName",
+        "Clicks",
+        "AvgCpc",
+        "Cost",
+        "Date"
+    ];
 
     public $timestamps = false;
 
@@ -48,10 +45,10 @@ class Direct extends Model
 
         $dateDiff = date_diff(new \DateTime($lastDate), new \DateTime($currentDate));
 
-        if ($dateDiff->days < 8) {
-            return false;
-        } else {
+        if ($dateDiff->days >= 1) {
             return $lastDate;
+        } else {
+            return false;
         }
 
     }

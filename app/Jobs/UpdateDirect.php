@@ -34,21 +34,18 @@ class UpdateDirect implements ShouldQueue
             while ($row = fgetcsv($stream, null, "\t")) {
                 Direct::create([
                     'CampaignId' => $row[0],
-                    'CampaignName' => $row[1],
-                    'AdGroupId' => $row[2],
-                    'Query' => $row[3],
-                    'Impressions' => $row[4],
-                    'CampaignType' => $row[5],
+                    'LocationOfPresenceId' => $row[1],
+                    'LocationOfPresenceName' => $row[2],
+                    'CampaignName' => $row[3],
+                    'Device' => $row[4],
+                    'AdGroupId' => $row[5],
                     'ConversionRate' => $row[6],
                     'Ctr' => $row[7],
                     'AdGroupName' => $row[8],
-                    'AvgPageviews' => $row[9],
-                    'Clicks' => $row[10],
-                    'BounceRate' => $row[11],
-                    'Criteria' => $row[12],
-                    'AvgCpc' => $row[13],
-                    'Cost' => $row[14],
-                    'Date' => $row[15]
+                    'Clicks' => $row[9],
+                    'AvgCpc' => $row[10],
+                    'Cost' => $row[11],
+                    'Date' => $row[12]
                 ]);
             }
         } catch (\PDOException $e) {

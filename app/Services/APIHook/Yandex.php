@@ -141,21 +141,18 @@ final class Yandex {
                     'DateTo' => $this->dateTo
                 ],
             'DateRangeType' => 'CUSTOM_DATE',
-            'ReportType' => 'SEARCH_QUERY_PERFORMANCE_REPORT',
+            'ReportType' => 'CUSTOM_REPORT',
             'FieldNames' => [
                 "CampaignId",
+                "LocationOfPresenceId",
+                "LocationOfPresenceName",
                 "CampaignName",
+                "Device",
                 "AdGroupId",
-                "Query",
-                "Impressions",
-                "CampaignType",
-                "ConversionRate",
-                "Ctr", 
+                "ConversionRate", 
+                "Ctr",
                 "AdGroupName",
-                "AvgPageviews",
                 "Clicks", 
-                "BounceRate",
-                "Criteria",
                 "AvgCpc",
                 "Cost",
                 "Date"
@@ -273,7 +270,7 @@ final class Yandex {
                 'metrics' => 'ym:s:visits,ym:s:users',
                 'date1' => $this->dateFrom,
                 'date2' => $this->dateTo,
-                'dimensions' => 'ym:s:clientID,ym:s:firstVisitDate,ym:s:startURL',
+                'dimensions' => 'ym:s:clientID,ym:s:firstVisitDate,ym:s:startURL,ym:s:<attribution>UTMTerm,ym:s:regionCity,ym:s:deviceCategory',
                 'filters' => "ym:s:clientID=={$id}",
                 'limit' => 10000
             ]
