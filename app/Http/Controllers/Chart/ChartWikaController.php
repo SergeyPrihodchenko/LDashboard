@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Chart;
 
 use App\Http\Controllers\Controller;
+use App\Models\Direct;
 use App\Models\SateliPhone;
 use App\Models\WikaInvoice;
 use App\Models\WikaPhone;
@@ -183,26 +184,37 @@ class ChartWikaController extends Controller
 
     public function fetchDirect()
     {
-        $direct = Parser::fileReader();
+        // $direct = Parser::fileReader();
 
-        $sum = 0;
+        // $sum = 0;
 
-        foreach ($direct as $key => $value) {
-            $sum += $value;
+        // foreach ($direct as $key => $value) {
+        //     $sum += $value;
+        // }
+
+        // $directKeys = array_keys($direct);
+
+        // $sum = number_format($sum, 2, '.', '');
+
+        // $fromDate = $directKeys[0];
+        // $toDate = $directKeys[count($directKeys) - 1];
+
+        $data = Direct::all()->toArray();
+        $fromDate = date('Y-m-d', strtotime($data[0]['Date']));
+        $toDate = date('Y-m-d', strtotime($data[count($data) - 1]['Date']));
+        $sumPrice = 0;
+        $countCliks = 0;
+
+        foreach ($data as $key => $value) {
+            $sumPrice += (float)$value['Cost'];
+            $countCliks += (int) $value['Clicks'];
         }
-
-        $directKeys = array_keys($direct);
-
-        $sum = number_format($sum, 2, '.', '');
-
-        $fromDate = $directKeys[0];
-        $toDate = $directKeys[count($directKeys) - 1];
 
         return [
             'fromDate' => $fromDate,
             'toDate' => $toDate,
-            'sumPrice' => $sum,
-            'countCliks' => count($direct)
+            'sumPrice' => number_format($sumPrice, 2, '.', ','),
+            'countCliks' => $countCliks
             ];
     }
 }

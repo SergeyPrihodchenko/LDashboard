@@ -103,10 +103,10 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
       >
         <DialogContent>
            <Grid container spacing={2}>
-                <Grid item xs={4} sx={{width: '700px', borderRight: 'solid 1px', height: '350px'}}>
+                <Grid item xs={4} sx={{width: '800px', borderRight: 'solid 1px', height: '650px'}}>
                     <Container sx={{width: 500, position: 'fixed', '&, css-1xgtf4e-MuiContainer-root': {padding: 0}}}>
                         <Container sx={{marginBottom: 1.2}}>
-                            <p className='titile_header'>Имя: </p>
+                            <p className='titile_header'>Название сайта: </p>
                             <p>{dataModal.headers.title}</p>
                         </Container>
                         <Container sx={{marginBottom: 1.2}}>
@@ -124,6 +124,34 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
                         <Container sx={{marginBottom: 1.2}}>
                             <p className='titile_header'>Яндекс ID клиента: </p>
                             <p>{dataModal.headers.ym_uid}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>Количество переходов по ссылке: </p>
+                            <p>{dataModal.headers.ym_uid}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>Город клиента: </p>
+                            <p>{dataModal.headers.city}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>Название рекламной группы: </p>
+                            <p>{dataModal.headers.adGroupName}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>Название рекламной компании: </p>
+                            <p>{dataModal.headers.campaignName}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>Соотношение показов и переходов по рекламе: </p>
+                            <p>{dataModal.headers.ctr}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>Средняя стоимость перехода по ссылке: </p>
+                            <p>{dataModal.headers.avgCpc}</p>
+                        </Container>
+                        <Container sx={{marginBottom: 1.2}}>
+                            <p className='titile_header'>общая стоимость переходов по ссылке: </p>
+                            <p>{dataModal.headers.costClicks}</p>
                         </Container>
                         <Container sx={{marginBottom: 1.2}}>
                             <p className='titile_header'>Сумма оплаты: </p>
