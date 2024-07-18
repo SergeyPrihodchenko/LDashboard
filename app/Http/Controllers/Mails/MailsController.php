@@ -85,8 +85,35 @@ class MailsController extends Controller
 
         $countClicks = count($dataMetric['data']);
         $data['countClicks'] = $countClicks;
+        $directs = [];
         foreach ($dataMetric['data'] as $value) {
+
+            if($cmId = $this->serchCmId($dataMetric['data'][0]['dimensions'][2]['name'])) {
+            if(!array_key_exists(date("Y-m-d", strtotime($value['dimensions'][1]['name'])), $directs)) {
+                $metricParams['cmId'] = $cmId;
+                $metricParams['date'] = $value['dimensions'][1]['name'];
+                $metricParams['regionId'] = $value['dimensions'][4]['id'];
+                $metricParams['device'] = $value['dimensions'][5]['id'];
+                $direct = Direct::select('CampaignName', 'AdGroupName', 'Cost', 'LocationOfPresenceName', 'AvgCpc')
+                ->where('CampaignId', $metricParams['cmId']['CompaignId'])
+                ->where('AdGroupId', $metricParams['cmId']['AdGroupId'])
+                ->where('LocationOfPresenceId', $metricParams['regionId'])
+                ->where('Device', strtoupper($metricParams['device']))
+                ->where('Clicks', $countClicks)
+                ->where('Date', $metricParams['date'])
+                ->get()
+                ->toArray();
+                $directs[date("Y-m-d", strtotime($value['dimensions'][1]['name']))] = [
+                    'costClicks' => $direct[0]['Cost'],
+                    'avgCpc' => $direct[0]['AvgCpc'],
+                    'adGroupName' => $direct[0]['AdGroupName'],
+                    'campaignName' => $direct[0]['CampaignName']
+                ];
+                }
+            }
+
             $path = mb_substr($value['dimensions'][2]['name'], 0, strripos($value['dimensions'][2]['name'], '?'));
+
             $data['data'][date("Y-m-d", strtotime($value['dimensions'][1]['name']))][] = [
                 'title' => 'Яндекс',
                 'client_id' => $value['dimensions'][0]['name'],
@@ -95,31 +122,19 @@ class MailsController extends Controller
                 'favicon' => $value['dimensions'][2]['favicon'],
                 'keyPhrase' => $value['dimensions'][3]['name'],
                 'meric_visits' => $value['metrics'][0],
-                'meric_users' => $value['metrics'][1]
+                'meric_users' => $value['metrics'][1],
+                'avgCpc' => isset($direct[0]['AvgCpc']) ? $direct[0]['AvgCpc'] : null,
+                'adGroupName' => isset($direct[0]['AdGroupName']) ? $direct[0]['AdGroupName'] : null,
+                'campaignName' => isset($direct[0]['CampaignName']) ? $direct[0]['CampaignName'] : null,
+                'city' => isset($direct[0]['LocationOfPresenceName']) ? $direct[0]['LocationOfPresenceName'] : null
             ];
         }
 
-        if($cmId = $this->serchCmId($dataMetric['data'][0]['dimensions'][2]['name'])) {
-            $metricParams['cmId'] = $cmId;
-            $metricParams['date'] = $value['dimensions'][1]['name'];
-            $metricParams['regionId'] = $value['dimensions'][4]['id'];
-            $metricParams['device'] = $value['dimensions'][5]['id'];
-            $direct = Direct::select('CampaignName', 'AdGroupName', 'Cost', 'LocationOfPresenceName', 'AvgCpc', 'Ctr')
-            ->where('CampaignId', $metricParams['cmId']['CompaignId'])
-            ->where('AdGroupId', $metricParams['cmId']['AdGroupId'])
-            ->where('LocationOfPresenceId', $metricParams['regionId'])
-            ->where('Device', strtoupper($metricParams['device']))
-            ->where('Clicks', $countClicks)
-            ->where('Date', $metricParams['date'])
-            ->get()
-            ->toArray();
-            $data['costClicks'] = $direct[0]['Cost'];
-            $data['ctr'] = $direct[0]['Ctr'];
-            $data['avgCpc'] = $direct[0]['AvgCpc'];
-            $data['adGroupName'] = $direct[0]['AdGroupName'];
-            $data['campaignName'] = $direct[0]['CampaignName'];
-            $data['city'] = $direct[0]['LocationOfPresenceName'];
+        $sumCost = 0;
+        foreach ($directs as $direct) {
+            $sumCost += (float) $direct['costClicks'];
         }
+        $data['costClicks'] = $sumCost;
 
         return $data;
     }

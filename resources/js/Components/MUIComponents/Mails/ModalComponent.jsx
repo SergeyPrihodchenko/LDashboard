@@ -73,6 +73,21 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
                                                 <span className='titile_header'>домен: </span><span>{elem.favicon}</span>
                                             </Typography>
                                             <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>Название рекламной группы: </span><span>{elem.adGroupName}</span>
+                                            </Typography>
+                                            <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>Название рекламной компании: </span><span>{elem.campaignName}</span>
+                                            </Typography>
+                                            <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>Ключевая фраза: </span><span>{elem.keyPhrase}</span>
+                                            </Typography>
+                                            <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>Город: </span><span>{elem.city}</span>
+                                            </Typography>
+                                            <Typography className='card_text' variant='p'>
+                                                <span className='titile_header'>Стоимость перехода по ссылке: </span><span>{elem.avgCpc}</span>
+                                            </Typography>
+                                            <Typography className='card_text' variant='p'>
                                                 <span className='titile_header'>посещения: </span><span>{elem.meric_visits}</span>
                                             </Typography>
                                             <Typography className='card_text' variant='p'>
@@ -103,7 +118,7 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
       >
         <DialogContent>
            <Grid container spacing={2}>
-                <Grid item xs={4} sx={{width: '800px', borderRight: 'solid 1px', height: '650px'}}>
+                <Grid item xs={4} sx={{width: '800px', height: '650px'}}>
                     <Container sx={{width: 500, position: 'fixed', '&, css-1xgtf4e-MuiContainer-root': {padding: 0}}}>
                         <Container sx={{marginBottom: 1.2}}>
                             <p className='titile_header'>Название сайта: </p>
@@ -127,27 +142,7 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
                         </Container>
                         <Container sx={{marginBottom: 1.2}}>
                             <p className='titile_header'>Количество переходов по ссылке: </p>
-                            <p>{dataModal.headers.ym_uid}</p>
-                        </Container>
-                        <Container sx={{marginBottom: 1.2}}>
-                            <p className='titile_header'>Город клиента: </p>
-                            <p>{dataModal.headers.city}</p>
-                        </Container>
-                        <Container sx={{marginBottom: 1.2}}>
-                            <p className='titile_header'>Название рекламной группы: </p>
-                            <p>{dataModal.headers.adGroupName}</p>
-                        </Container>
-                        <Container sx={{marginBottom: 1.2}}>
-                            <p className='titile_header'>Название рекламной компании: </p>
-                            <p>{dataModal.headers.campaignName}</p>
-                        </Container>
-                        <Container sx={{marginBottom: 1.2}}>
-                            <p className='titile_header'>Соотношение показов и переходов по рекламе: </p>
-                            <p>{dataModal.headers.ctr}</p>
-                        </Container>
-                        <Container sx={{marginBottom: 1.2}}>
-                            <p className='titile_header'>Средняя стоимость перехода по ссылке: </p>
-                            <p>{dataModal.headers.avgCpc}</p>
+                            <p>{dataModal.headers.countClicks}</p>
                         </Container>
                         <Container sx={{marginBottom: 1.2}}>
                             <p className='titile_header'>общая стоимость переходов по ссылке: </p>

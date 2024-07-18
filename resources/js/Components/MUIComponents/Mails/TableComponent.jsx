@@ -107,6 +107,8 @@ export default function TableComponent({data}) {
         id: '',
         mail: '',
         ym_uid: '',
+        countClicks: '',
+        costClicks: '',
         sumPrice: ''
       },
       data: {}
@@ -123,11 +125,6 @@ export default function TableComponent({data}) {
           mail: '',
           ym_uid: '',
           countClicks: '',
-          city: '',
-          adGroupName: '',
-          campaignName: '',
-          ctr: '',
-          avgCpc: '',
           costClicks: '',
           sumPrice: '',
         },
@@ -157,11 +154,6 @@ export default function TableComponent({data}) {
             mail: res.data.client_mail,
             ym_uid: res.data.client_ym_uid ?? 'отсутствует',
             countClicks: res.data.countClicks ?? 'отсутствует',
-            city: res.data.city ?? 'отсутствует',
-            adGroupName: res.data.adGroupName ?? 'отсутствует',
-            campaignName: res.data.campaignName ?? 'отсутствует',
-            ctr: res.data.ctr ?? 'отсутствует',
-            avgCpc: res.data.avgCpc ?? 'отсутствует',
             costClicks: res.data.costClicks ?? 'отсутствует',
             sumPrice: res.data.sum_price,
           }
