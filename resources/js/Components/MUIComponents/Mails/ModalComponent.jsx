@@ -79,7 +79,6 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
                                                 </Typography> :
                                                 ''
                                             }
-                                            
                                             {
                                                 elem.adGroupName ? 
                                                 <Typography className='card_text' variant='p'>
@@ -179,9 +178,17 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
                 {
                     !skeleton ?
                     <>
-                    <Skeleton variant="rectangular" width={500} height={260} />
+                    <Grid container className='card_group'>
+                        <Grid container className='card_group_items'>
+                            <Skeleton variant="rectangular" width={960} height={260} />
+                        </Grid>
+                    </Grid>
                     <br />
-                    <Skeleton variant="rounded" width={500} height={260} />
+                    <Grid container className='card_group'>
+                        <Grid container className='card_group_items'>
+                            <Skeleton variant="rectangular" width={960} height={260} />
+                        </Grid>
+                    </Grid>
                     </> : ''
                 }
                 {dataModal ? render(dataModal.data) : ''}
