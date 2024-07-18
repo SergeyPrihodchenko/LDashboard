@@ -112,7 +112,10 @@ class MailsController extends Controller
                 }
             }
 
-            $path = mb_substr($value['dimensions'][2]['name'], 0, strripos($value['dimensions'][2]['name'], '?'));
+            $path = $value['dimensions'][2]['name'];
+            if(strripos($value['dimensions'][2]['name'], '?') !== false) {
+                $path = mb_substr($value['dimensions'][2]['name'], 0, strripos($value['dimensions'][2]['name'], '?'));
+            }
 
             $data['data'][date("Y-m-d", strtotime($value['dimensions'][1]['name']))][] = [
                 'title' => 'Яндекс',

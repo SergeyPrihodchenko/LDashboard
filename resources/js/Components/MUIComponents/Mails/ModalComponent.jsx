@@ -72,21 +72,42 @@ export default function ModalComponent({open, handleClose, dataModal, skeleton, 
                                             <Typography className='card_text' variant='p'>
                                                 <span className='titile_header'>домен: </span><span>{elem.favicon}</span>
                                             </Typography>
-                                            <Typography className='card_text' variant='p'>
+                                            {
+                                                elem.adGroupName ? 
+                                                <Typography className='card_text' variant='p'>
                                                 <span className='titile_header'>Название рекламной группы: </span><span>{elem.adGroupName}</span>
-                                            </Typography>
-                                            <Typography className='card_text' variant='p'>
+                                                </Typography> :
+                                                ''
+                                            }
+                                            
+                                            {
+                                                elem.adGroupName ? 
+                                                <Typography className='card_text' variant='p'>
                                                 <span className='titile_header'>Название рекламной компании: </span><span>{elem.campaignName}</span>
-                                            </Typography>
-                                            <Typography className='card_text' variant='p'>
+                                                </Typography> :
+                                                ''
+                                            }
+                                            {
+                                                elem.adGroupName ? 
+                                                <Typography className='card_text' variant='p'>
                                                 <span className='titile_header'>Ключевая фраза: </span><span>{elem.keyPhrase}</span>
-                                            </Typography>
-                                            <Typography className='card_text' variant='p'>
+                                                </Typography> :
+                                                ''
+                                            }
+                                            {
+                                                elem.adGroupName ? 
+                                                <Typography className='card_text' variant='p'>
                                                 <span className='titile_header'>Город: </span><span>{elem.city}</span>
-                                            </Typography>
-                                            <Typography className='card_text' variant='p'>
+                                                </Typography> :
+                                                ''
+                                            }
+                                            {
+                                                elem.adGroupName ? 
+                                                <Typography className='card_text' variant='p'>
                                                 <span className='titile_header'>Стоимость перехода по ссылке: </span><span>{elem.avgCpc}</span>
-                                            </Typography>
+                                                </Typography> :
+                                                ''
+                                            }
                                             <Typography className='card_text' variant='p'>
                                                 <span className='titile_header'>посещения: </span><span>{elem.meric_visits}</span>
                                             </Typography>
