@@ -5,8 +5,8 @@ import { Grid } from '@mui/material';
 
 export default function Guest({ children }) {
     return (
-        <Grid container sx={{padding: '0 10px', margin: '0 auto'}}>
-            <Grid item sx={{ width: '100%'}}>
+        <Grid container sx={{margin: '0 auto'}}>
+            <Grid item sx={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
                 <Grid container sx={{width: '100%', background: 'black', padding: 1}}>
                     <Grid item xs={12}>
                         <Header/>
