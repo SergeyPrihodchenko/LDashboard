@@ -6,6 +6,7 @@ import { Alert, Box, Button, Container, Grid, Skeleton, Typography } from '@mui/
 import CalendarComponent from '@/Components/MUIComponents/Mails/CalendarComponent';
 import axios from 'axios';
 import ControlPanelComponent from '@/Components/Chart/ControlPanelComponent';
+import { RestartAlt } from '@mui/icons-material';
 
 const preparationOfPoints = (obj) => {
     const arr = []
@@ -18,6 +19,22 @@ const preparationOfPoints = (obj) => {
 
 export default function ChartPage({chartPhone, chartMail, entryPoints, generalData}) {
 
+    const reset = () => {
+        chart.data.labels = preparationOfPoints(entryPoints).map(point => point)
+        chart.data.datasets = [
+            {
+            label: 'Количества писем за период',
+            data: parse(chartMail).map(row => row.count)
+            },
+            {
+            label: 'Количества звонков за период',
+            data: parse(chartPhone).map(row => row.count)
+            },
+        ]
+        chart.update()
+        setInvoiceData(generalData)
+    }
+
     const parse = (chartData) => {
         const data = [];
         for(let key in chartData) {
@@ -27,6 +44,10 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
     }
 
     const switchData = () => {
+
+        if(dateFrom.length == 0 || dateTo.length == 0) {
+            return
+        }
 
         if((new Date(dateFrom)) > (new Date(dateTo))) {
 
@@ -40,7 +61,6 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
 
         axios.post(route('chart.whika'), data)
         .then(res => {
-            console.log(res.data);
             setInvoiceData({...invoiveData, 
                 countMails: res.data.countMails,
                 sumPriceForMails: res.data.sumPriceForMails,
@@ -48,17 +68,31 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                 sumPriceForCalls: res.data.sumPriceForCalls
             })
 
+            chart.data.labels = preparationOfPoints(res.data.entryPoints).map(point => point)
+            chart.data.datasets = [
+                {
+                label: 'Количества писем за период',
+                data: parse(res.data.chartInvoice).map(row => row.count)
+                },
+                {
+                label: 'Количества звонков за период',
+                data: parse(res.data.chartPhone).map(row => row.count)
+                },
+            ]
+            chart.update()
         })
         .catch(err => console.log(err))
     }
 
     const [dataMail, setDataMail] = useState(parse(chartMail))
     const [dataPhone, setDataPhone] = useState(parse(chartPhone))
+    const [dataEntryPoints, setDataEntryPoints] = useState(entryPoints)
     const [direct, setDirect] = useState(false)
     const [dateFrom, setDateFrom] = useState('')
     const [dateTo, setDateTo] = useState('')
     const [invoiveData, setInvoiceData] = useState(generalData)
     const [dateError, setDateError] = useState(false)
+    const [chart, setChart] = useState('')
 
     const fetchDirect = () => {
         axios.post(route('wika.direct'))
@@ -80,30 +114,33 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
     const chartRef = createRef(null)
 
     const load = (async function(entryPoints, dataMail, dataPhone) {
-        new Chart(
-             chartRef.current,
-            {
-                type: 'line',
-                data: {
-                labels: preparationOfPoints(entryPoints).map(point => point),
-                datasets: [
-                    {
-                    label: 'Количества писем за период',
-                    data: dataMail.map(row => row.count)
-                    },
-                    {
-                    label: 'Количества звонков за период',
-                    data: dataPhone.map(row => row.count)
-                    },
-                ],
-                }
-            }
-        );
+        const newChart = new Chart(
+            chartRef.current,
+           {
+               type: 'line',
+               data: {
+               labels: preparationOfPoints(entryPoints).map(point => point),
+               datasets: [
+                   {
+                   label: 'Количества писем за период',
+                   data: dataMail.map(row => row.count)
+                   },
+                   {
+                   label: 'Количества звонков за период',
+                   data: dataPhone.map(row => row.count)
+                   },
+               ],
+               }
+           }
+       )
+
+       setChart(newChart)
+
     });
             
 
     useEffect(() => {
-        load(entryPoints, dataMail, dataPhone)
+        load(dataEntryPoints, dataMail, dataPhone)
         fetchDirect()
     }, [])
 
@@ -115,7 +152,10 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                 <Container sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', gap: '10px'}}>
                         <CalendarComponent lable={'Начало периода'} dateChange={fromDateChange}/>
                         <CalendarComponent lable={'Конец периода'} dateChange={toDateChange}/>
-                        <Button variant='contained' color='primary' onClick={switchData}>Просмотреть</Button>
+                        <Box sx={{display: 'flex', flexDirection: 'column', flexGrow: '8px', rowGap: .5, padding: '4px' }}>
+                            <Button variant='contained' color='primary' onClick={switchData}>Просмотреть</Button>
+                            <Button variant='contained' color='primary' onClick={reset}>Обновить<RestartAlt/></Button>
+                        </Box>
                         {dateError ? <Alert severity='error'>Не корректный диапазон даты</Alert> : ''}
                 </Container>
                 <hr style={{marginTop: '15px'}}/>

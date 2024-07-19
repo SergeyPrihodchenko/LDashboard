@@ -203,6 +203,8 @@ class ChartWikaController extends Controller
             }
         });
 
+        $newChartPhone = [];
+        $newChartInvoice = [];
         foreach ($entryPoints as $point) {
             if(isset($chartInvoice[$point])) {
                 $newChartInvoice[$point] = $chartInvoice[$point];
