@@ -48,10 +48,10 @@ class Direct extends Model
 
         $dateDiff = date_diff(new \DateTime($lastDate), new \DateTime($currentDate));
 
-        if ($dateDiff->days < 8) {
-            return false;
+        if ($dateDiff->days >= 1) {
+            return date('Y-m-d', strtotime($lastDate));
         } else {
-            return $lastDate;
+            return false;
         }
 
     }
