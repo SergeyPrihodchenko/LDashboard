@@ -44,8 +44,8 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
     }
 
     const switchData = () => {
-
         if(dateFrom.length == 0 || dateTo.length == 0) {
+            setDateError(true)
             return
         }
 
@@ -160,7 +160,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                 </Container>
                 <hr style={{marginTop: '15px'}}/>
             </Grid>
-            <div><canvas style={{width: '1400px', height: '500px', margin: '0 auto'}} onLoad={load} ref={chartRef} id="acquisitions"></canvas></div>
+            <div><canvas style={{width: '1400px', height: '500px', margin: '0 auto'}} ref={chartRef} id="acquisitions"></canvas></div>
             <Grid container sx={{borderTop: 'solid 1px', marginTop: 1.5, padding: 1}}>
                 <Grid item xs={12}>
                     <Box className='present_data_box'>

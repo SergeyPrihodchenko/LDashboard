@@ -38,6 +38,20 @@
   box-shadow: rgba(27, 31, 35, 0.04) 0px 1px 0px, rgba(255, 255, 255, 0.25) 0px 1px 0px inset;
 }
 
+.box_accordion {
+  margin-bottom: 3px;
+}
+.box_accordion .accordion {
+  max-height: 600px;
+  overflow: auto;
+}
+.box_accordion .accordion .accordion_summary {
+  box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
+}
+.box_accordion .accordion .accordion_detail {
+  box-shadow: rgba(27, 31, 35, 0.04) 0px 1px 0px, rgba(255, 255, 255, 0.25) 0px 1px 0px inset;
+}
+
 .footer {
   height: 75px;
   background-color: black;
