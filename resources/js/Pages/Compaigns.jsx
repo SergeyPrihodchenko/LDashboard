@@ -6,6 +6,8 @@ import Chart from 'chart.js/auto'
 import { createRef, useEffect, useState } from 'react';
 
 const Compaigns = ({data}) => {
+
+    console.log(data);
     const parser = (compaignData) => {
         const domElems = []
         for(let key in compaignData) {
@@ -38,7 +40,7 @@ const Compaigns = ({data}) => {
         return compaigns
     }
 
-    const [compaigns, setCompaigns] = useState(preparation(data))
+    const [compaigns, setCompaigns] = useState(preparation(data.direct))
     const [chart, setChart] = useState('')
     const chartRef = createRef(null)
 
@@ -74,7 +76,7 @@ const Compaigns = ({data}) => {
             <hr />
             <Grid container>
                 <Grid item xs={5}>
-                    {parser(data)}
+                    {parser(data.direct)}
                 </Grid>
                 <Grid item xs={7}><canvas style={{width: '800px', height: '300px', margin: '0 auto'}} onLoad={load} ref={chartRef} id="acquisitions"></canvas></Grid>
             </Grid>
