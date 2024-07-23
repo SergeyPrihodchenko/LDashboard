@@ -1,19 +1,17 @@
 import ControlPanelComponent from '@/Components/Compaigns/ControlPanelComponent';
 import AccordionCompaign from '@/Components/MUIComponents/Compaigns/Accordion';
 import Guest from '@/Layouts/GuestLayout';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import Chart from 'chart.js/auto'
 import { createRef, useEffect, useState } from 'react';
 
 const Compaigns = ({data}) => {
-
     const parser = (compaignData) => {
         const domElems = []
-
         for(let key in compaignData) {
 
             domElems.push(
-                <Box className="box_accordion">
+                <Box className="box_accordion" key={key}>
                     <AccordionCompaign
                         title={compaignData[key].campaignName}
                         cost={compaignData[key].cost}

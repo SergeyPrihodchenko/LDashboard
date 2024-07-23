@@ -1,12 +1,11 @@
-import { Link, Head } from '@inertiajs/react';
 import { createRef, useEffect, useState } from 'react';
+import { RestartAlt } from '@mui/icons-material';
 import Chart from 'chart.js/auto'
 import Guest from '@/Layouts/GuestLayout';
-import { Alert, Box, Button, Container, Grid, Skeleton, Typography } from '@mui/material';
 import CalendarComponent from '@/Components/MUIComponents/Mails/CalendarComponent';
-import axios from 'axios';
 import ControlPanelComponent from '@/Components/Chart/ControlPanelComponent';
-import { RestartAlt } from '@mui/icons-material';
+import axios from 'axios';
+import { Alert, Box, Button, Container, Grid, Skeleton, Typography } from '@mui/material';
 
 const preparationOfPoints = (obj) => {
     const arr = []

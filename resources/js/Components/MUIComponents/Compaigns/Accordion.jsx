@@ -16,9 +16,10 @@ const AccordionCompaign = ({title, cost, details}) => {
         return data
     })
 
-    const renderDetaile = React.useCallback((detail) => {
+    const renderDetaile = React.useCallback((detail, key) => {
+
         return (
-            <AccordionDetails className='accordion_detail'>
+            <AccordionDetails key={key} className='accordion_detail'>
                 {detail}
             </AccordionDetails>
         )
