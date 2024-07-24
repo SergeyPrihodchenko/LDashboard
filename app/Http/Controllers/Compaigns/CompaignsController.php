@@ -142,12 +142,12 @@ class CompaignsController extends Controller
     {
         $clientsVisitor = [];
         foreach ($metricClients as $compaignId => $clients) {
-            $clientsVisitor[$compaignId] = WikaVisitor::whereIn('_ym_uid', $clients)->get('client_id');
+            $clientsVisitor[$compaignId] = WikaVisitor::whereIn('_ym_uid', $clients)->distinct()->get('client_id');
         }
 
         $clientsInVisitor = [];
         foreach ($clientsVisitor as $compaignId => $clientsIds) {
-            $clientsInVisitor[$compaignId] = WikaInvoice::whereIn('client_id', $clientsIds)->get();
+            $clientsInVisitor[$compaignId] = WikaInvoice::where('invoice_status', 2)->whereIn('client_id', $clientsIds)->distinct()->get();
         }
 
         return $clientsInVisitor;
