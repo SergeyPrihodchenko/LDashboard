@@ -231,17 +231,6 @@ class ChartWikaController extends Controller
 
     public function fetchDirect()
     {
-        // Запрос к api direct
-        // $direct = Parser::fileReader();
-        // $sum = 0;
-        // foreach ($direct as $key => $value) {
-        //     $sum += $value;
-        // }
-        // $directKeys = array_keys($direct);
-        // $sum = number_format($sum, 2, '.', '');
-        // $fromDate = $directKeys[0];
-        // $toDate = $directKeys[count($directKeys) - 1];
-
         $data = Direct::all()->toArray();
         $fromDate = date('Y-m-d', strtotime($data[0]['Date']));
         $toDate = date('Y-m-d', strtotime($data[count($data) - 1]['Date']));

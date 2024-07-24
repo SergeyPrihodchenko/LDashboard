@@ -44,6 +44,13 @@ class CompaignsController extends Controller
             }
         }
 
+        return Inertia::render('Compaigns', ['data' => $data]);
+    }
+
+    public function invoiceClientByDirect(): array
+    {
+        $data = [];
+
         $yandex = new Yandex(env('AUTH_TOKEN_METRIC'), env('COUNTER_ID_METRIC'));
 
         $metrics = $yandex->metricCompaign();
@@ -60,7 +67,7 @@ class CompaignsController extends Controller
         $data['clientsByGroup'] = $clientsDataByGroup;
         $data['clientsByCompaign'] = $clientsDataByCompaign;
 
-        return Inertia::render('Compaigns', ['data' => $data]);
+        return $data;
     }
 
     private function parserForMetricByCompaign(array $metrics): array

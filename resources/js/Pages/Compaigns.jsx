@@ -2,12 +2,25 @@ import ControlPanelComponent from '@/Components/Compaigns/ControlPanelComponent'
 import AccordionCompaign from '@/Components/MUIComponents/Compaigns/Accordion';
 import Guest from '@/Layouts/GuestLayout';
 import { Box, Grid } from '@mui/material';
+import axios from 'axios';
 import Chart from 'chart.js/auto'
 import { createRef, useEffect, useState } from 'react';
 
 const Compaigns = ({data}) => {
 
     console.log(data);
+
+    const fetchInvoice = () => {
+
+        axios.post(route('compaigns.wika.invoice'))
+        .then(result => {
+            console.log(result.data);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
     const parser = (compaignData) => {
         const domElems = []
         for(let key in compaignData) {
@@ -68,6 +81,7 @@ const Compaigns = ({data}) => {
 
     useEffect(() => {
         load(compaigns)
+        fetchInvoice()
     })
 
     return (
@@ -78,7 +92,7 @@ const Compaigns = ({data}) => {
                 <Grid item xs={5}>
                     {parser(data.direct)}
                 </Grid>
-                <Grid item xs={7}><canvas style={{width: '800px', height: '300px', margin: '0 auto'}} onLoad={load} ref={chartRef} id="acquisitions"></canvas></Grid>
+                <Grid item xs={7}><canvas style={{width: '600px', height: '300px', margin: '0 auto'}} onLoad={load} ref={chartRef} id="acquisitions"></canvas></Grid>
             </Grid>
         </Guest>
     )
