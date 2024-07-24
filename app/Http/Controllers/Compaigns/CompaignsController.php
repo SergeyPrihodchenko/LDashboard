@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Compaigns;
 
 use App\Http\Controllers\Controller;
 use App\Models\Direct;
+use App\Models\WikaInvoice;
 use App\Models\WikaVisitor;
 use App\Services\APIHook\Yandex;
 use Illuminate\Http\Request;
@@ -47,42 +48,47 @@ class CompaignsController extends Controller
 
         $metrics = $yandex->metricCompaign();
 
-        $metrics = $this->parserForMetric($metrics['data']);
+        $metricsByCompany = $this->parserForMetricByCompaign($metrics['data']);
+        $metricsByGroup = $this->parserForMetricByGroup($metrics['data']);
 
-        $data['metrics'] = $metrics;
+        $sortClientsByCompaign = $this->findClientForCompaign($metricsByCompany);
+        $sortClientsByGroup = $this->findClientForGroup($metricsByGroup);
 
-        $clientsByCompaign = $this->findClientForCompaign($metrics);
+        $clientsDataByCompaign = $this->findClientsInInvoice($sortClientsByCompaign);
+        $clientsDataByGroup = $this->findClientsInInvoice($sortClientsByGroup);
 
-        $clientsIdInVisitor = [];
-        foreach ($clientsByCompaign as $compaignId => $clients) {
-            $clientsIdInVisitor[$compaignId] = WikaVisitor::whereIn('_ym_uid', $clients)->get('client_id');
-        }
-
-        $data['test'] = $clientsIdInVisitor;
+        $data['clientsByGroup'] = $clientsDataByGroup;
+        $data['clientsByCompaign'] = $clientsDataByCompaign;
 
         return Inertia::render('Compaigns', ['data' => $data]);
     }
 
-    private function parserForMetric(array $metrics): array
+    private function parserForMetricByCompaign(array $metrics): array
     {
         $data = [];
 
         foreach ($metrics as $value) {
-            if(!array_key_exists($value['dimensions'][0]['name'], $data)) {
-                $data[$value['dimensions'][0]['name']][] = [
-                    'compaignGroupId' => $this->prepare($value['dimensions'][1]['name']),
-                    'clientId' => $value['dimensions'][2]['name'],
-                    'date' => $value['dimensions'][3]['name'],
-                    'clicks' => $value['metrics'][0]
-                ];
-            } else {
-                $data[$value['dimensions'][0]['name']][] = [
-                    'compaignGroupId' => $this->prepare($value['dimensions'][1]['name']),
-                    'clientId' => $value['dimensions'][2]['name'],
-                    'date' => $value['dimensions'][3]['name'],
-                    'clicks' => $value['metrics'][0]
-                ];
-            }
+            $data[$value['dimensions'][0]['name']][] = [
+                'compaignGroupId' => $this->prepare($value['dimensions'][1]['name']),
+                'clientId' => $value['dimensions'][2]['name'],
+                'date' => $value['dimensions'][3]['name'],
+                'clicks' => $value['metrics'][0]
+            ];
+        }
+
+        return $data;
+    }
+
+    private function parserForMetricByGroup(array $metrics): array
+    {
+        $data = [];
+
+        foreach ($metrics as $value) {
+            $data[$this->prepare($value['dimensions'][1]['name'])][] = [
+                'clientId' => $value['dimensions'][2]['name'],
+                'date' => $value['dimensions'][3]['name'],
+                'clicks' => $value['metrics'][0]
+            ];
         }
 
         return $data;
@@ -110,6 +116,34 @@ class CompaignsController extends Controller
         }
 
         return $data;
+    }
+
+    private function findClientForGroup(array $metrics): array
+    {
+        $data = [];
+        foreach ($metrics as $groupId => $metric) {
+            foreach ($metric as $key => $value) {
+                $data[$groupId][] = $value['clientId'];
+            }
+            $data[$groupId] = array_unique($data[$groupId]);
+        }
+
+        return $data;
+    }
+
+    private function findClientsInInvoice(array $metricClients): array
+    {
+        $clientsVisitor = [];
+        foreach ($metricClients as $compaignId => $clients) {
+            $clientsVisitor[$compaignId] = WikaVisitor::whereIn('_ym_uid', $clients)->get('client_id');
+        }
+
+        $clientsInVisitor = [];
+        foreach ($clientsVisitor as $compaignId => $clientsIds) {
+            $clientsInVisitor[$compaignId] = WikaInvoice::whereIn('client_id', $clientsIds)->get();
+        }
+
+        return $clientsInVisitor;
     }
 
 }
