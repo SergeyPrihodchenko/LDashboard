@@ -36,7 +36,7 @@ class UpdateDirectMiddlware
         $file_path = Parser::recordingCSV($data);
 
         if(!$file_path) {
-            Log::error("Ошибка при записи данных из директа в файл" . date('Y-m-d') . "\n");
+            Log::error("Ошибка при записи данных из директа в файл -- " . date('Y-m-d') . "\n");
             return $next($request);
         }
 

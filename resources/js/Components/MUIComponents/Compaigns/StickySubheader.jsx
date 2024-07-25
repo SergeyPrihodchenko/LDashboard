@@ -6,34 +6,63 @@ import ListSubheader from '@mui/material/ListSubheader';
 
 const prepareData = (direct, clients) => {
     const data = {}
-    data.compaigns = []
-    data.groups = []
+    data.campaigns = {}
+    data.groups = {}
 
-    for(let key in clients.clientsByCompaign) {
-        let invoiceClient = 0.00;
-        for(let i in clients.clientsByCompaign[key]) {
-            invoiceClient += +clients.clientsByCompaign[key][i].invoice_price
+  for(let key in direct) {
+      if(key in clients.clientsByCompaign) {
+        let invoiceCost = 0
+        clients.clientsByCompaign[key].forEach(el => {
+          invoiceCost += +el.invoice_price
+        });
+        data.campaigns[key] = `Комания: ${direct[key].campaignName} -- Затраты: ${direct[key].cost} -- Прибыль: ${invoiceCost}`
+      }
+
+      for(let i in direct[key].AdGroupId) {
+        if(i in clients.clientsByGroup && clients.clientsByGroup.length != 0) {
+          let invoiceCost = 0
+          clients.clientsByGroup[i].forEach(el => {
+            invoiceCost += +el.invoice_price
+          });
+          if(key in data.groups) {
+            data.groups[key].push(`${direct[key].AdGroupId[i].name} -- Затраты: ${direct[key].AdGroupId[i].cost} -- Прибыль: ${invoiceCost}`)
+          } else {
+            data.groups[key] = []
+            data.groups[key].push(`${direct[key].AdGroupId[i].name} -- Затраты: ${direct[key].AdGroupId[i].cost} -- Прибыль: ${invoiceCost}`)
+          }
+         
         }
-        if(key in direct) {
-            data.compaigns.push(`${direct[key].campaignName}: затраты: ${direct[key].cost} руб. | доход: ${invoiceClient} руб.`)
-        }    
-    }
+      }
+  }
 
-    for(let key in clients.clientsByGroup) {
+  return data
+}
 
-    }
+const render = (data) => {
+  const domElems = [];
 
-    return data
+  for(let key in data.campaigns) {
+    domElems.push((
+      <li key={`section-${key}`}>
+      <ul>
+        <ListSubheader>{`${data.campaigns[key]}`}</ListSubheader>
+        {data.groups[key].map((item) => (
+          <ListItem key={`item-${key}-${item}`}>
+            <ListItemText primary={`${item}`}/>
+          </ListItem>
+        ))}
+      </ul>
+    </li>
+    ))
+  }
+
+  return domElems
 }
 
 export default function StickySubheader({direct, clients}) {
+
     console.log(direct, clients);
 
-    const [comaigns, setCompaigns] = React.useState([])
-
-    React.useEffect(() => {
-        setCompaigns(prepareData(direct, clients).compaigns)
-    }, [clients])
   return (
     <List
       sx={{
@@ -47,18 +76,7 @@ export default function StickySubheader({direct, clients}) {
       }}
       subheader={<li />}
     >
-      {comaigns.map((sectionId) => (
-        <li key={`section-${sectionId}`}>
-          <ul>
-            <ListSubheader>{`${sectionId}`}</ListSubheader>
-            {[0, 1, 2].map((item) => (
-              <ListItem key={`item-${sectionId}-${item}`}>
-                <ListItemText primary={`Item ${item}`}/>
-              </ListItem>
-            ))}
-          </ul>
-        </li>
-      ))}
+      {clients.length != 0 ? render(prepareData(direct, clients)) : ''}
     </List>
   );
 }

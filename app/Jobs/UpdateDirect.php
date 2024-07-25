@@ -48,6 +48,8 @@ class UpdateDirect implements ShouldQueue
                     'Date' => $row[12]
                 ]);
             }
+
+            unlink($this->file_path);
         } catch (\PDOException $e) {
 
             Log::error($e->getMessage() . ' : ' . date('Y-m-d') . "\n");
