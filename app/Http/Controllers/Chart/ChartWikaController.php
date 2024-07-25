@@ -132,7 +132,11 @@ class ChartWikaController extends Controller
         $dateTo = date('Y-m-d', strtotime($validated['dateTo']));
         $entryPoints = [];
 
-        $dataWikaInvoice = WikaInvoice::select('invoice_date', 'invoice_status', 'client_mail_id', 'invoice_price')->where('invoice_date', '>', "$dateFrom 00:00:00", 'AND', 'invoice_date', '<', "$dateTo 23:59:59")->distinct()->get();
+        $dataWikaInvoice = WikaInvoice::select('invoice_date', 'invoice_status', 'client_mail_id', 'invoice_price')
+        ->where([
+            ['invoice_date', '>', "$dateFrom 00:00:00"],
+            ['invoice_date', '<', "$dateTo 23:59:59"]
+        ])->distinct()->get();
 
         $sateliPhone = SateliPhone::select('client_phone', 'invoice_status', 'invoice_price', 'invoice_date')->get();
 
@@ -157,15 +161,15 @@ class ChartWikaController extends Controller
         $countMail = 0;
         $sumPriceForMails = 0.00;
         $chartInvoice = [];
-        foreach ($dataWikaInvoice as $key => $value) {
+        foreach ($dataWikaInvoice as $key => $dateInvoice) {
             $countMail++;
-            $entryPoints[] = date('Y-m-d', strtotime($value['invoice_date']));
-            if(array_key_exists(date('Y-m-d', strtotime($value['invoice_date'])), $chartInvoice)) {
-                $chartInvoice[date('Y-m-d', strtotime($value['invoice_date']))]++;
+            $entryPoints[] = date('Y-m-d', strtotime($dateInvoice['invoice_date']));
+            if(array_key_exists(date('Y-m-d', strtotime($dateInvoice['invoice_date'])), $chartInvoice)) {
+                $chartInvoice[date('Y-m-d', strtotime($dateInvoice['invoice_date']))]++;
             } else {
-                $chartInvoice[date('Y-m-d', strtotime($value['invoice_date']))] = 1;
+                $chartInvoice[date('Y-m-d', strtotime($dateInvoice['invoice_date']))] = 1;
             }
-            if($value['invoice_status'] == 2) {
+            if($dateInvoice['invoice_status'] == 2) {
                 $sumPriceForMails += $dataWikaInvoice[$key]['invoice_price'];
             }
         }

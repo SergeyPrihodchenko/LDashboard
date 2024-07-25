@@ -45,10 +45,11 @@ const render = (data) => {
     domElems.push((
       <li key={`section-${key}`}>
       <ul>
-        <ListSubheader>{`${data.campaigns[key]}`}</ListSubheader>
+      <hr />
+        <ListSubheader sx={{fontSize: '1.1em', color: 'black'}}>{`${data.campaigns[key]}`}</ListSubheader>
         {data.groups[key].map((item) => (
           <ListItem key={`item-${key}-${item}`}>
-            <ListItemText primary={`${item}`}/>
+            <ListItemText sx={{color: 'gray'}} primary={`${item}`}/>
           </ListItem>
         ))}
       </ul>
