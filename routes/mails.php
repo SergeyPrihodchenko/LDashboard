@@ -8,6 +8,8 @@ Route::middleware(['directUpdate'])->group(function () {
 });
 
 Route::get('/mails/swagelo', [MailsController::class, 'indexSwagelo'])->name('swagelo');
+Route::post('/mails/swagelo', [MailsController::class, 'swageloGeneral'])->name('swagelo.general');
+
 Route::get('/mails/hylok', [MailsController::class, 'indexHylok'])->name('hylok');
 
 Route::post('/mails/wika', [MailsController::class, 'wikaGeneral'])->name('wika.general');

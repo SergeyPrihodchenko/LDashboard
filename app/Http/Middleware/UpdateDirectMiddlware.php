@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Jobs\UpdateDirect;
-use App\Models\Direct;
+use App\Models\DirectWika;
 use App\Models\WikaInvoice;
 use App\Services\APIHook\Yandex;
 use App\Services\Parser\Parser;
@@ -21,7 +21,7 @@ class UpdateDirectMiddlware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $lastDate = Direct::checkUpdate();
+        $lastDate = DirectWika::checkUpdate();
         
         if(!$lastDate) {
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Compaigns;
 
 use App\Http\Controllers\Controller;
-use App\Models\Direct;
+use App\Models\DirectWika;
 use App\Models\WikaInvoice;
 use App\Models\WikaVisitor;
 use App\Services\APIHook\Yandex;
@@ -14,7 +14,7 @@ class CompaignsController extends Controller
 {
     public function index()
     {
-        $direct = Direct::all('CampaignId', 'CampaignName', 'AdGroupId', 'AdGroupName', 'Clicks', 'Cost', 'Date');
+        $direct = DirectWika::all('CampaignId', 'CampaignName', 'AdGroupId', 'AdGroupName', 'Clicks', 'Cost', 'Date');
 
         $data = [];
         $data['direct'] = [];
@@ -51,7 +51,7 @@ class CompaignsController extends Controller
     {
         $data = [];
 
-        $yandex = new Yandex(env('AUTH_TOKEN_METRIC'), env('COUNTER_ID_METRIC'));
+        $yandex = new Yandex(env('AUTH_TOKEN_METRIC_WIKA'), env('COUNTER_ID_METRIC_WIKA'));
 
         $metrics = $yandex->metricCompaign();
 

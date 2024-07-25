@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Chart;
 
 use App\Http\Controllers\Controller;
-use App\Models\Direct;
+use App\Models\DirectWika;
 use App\Models\SateliPhone;
 use App\Models\WikaInvoice;
 use App\Models\WikaPhone;
@@ -235,7 +235,7 @@ class ChartWikaController extends Controller
 
     public function fetchDirect()
     {
-        $data = Direct::all()->toArray();
+        $data = DirectWika::all()->toArray();
         $fromDate = date('Y-m-d', strtotime($data[0]['Date']));
         $toDate = date('Y-m-d', strtotime($data[count($data) - 1]['Date']));
         $sumPrice = 0;

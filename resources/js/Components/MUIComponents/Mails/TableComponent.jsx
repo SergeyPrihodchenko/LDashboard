@@ -139,8 +139,21 @@ export default function TableComponent({data}) {
       const data = new FormData
     
       data.set('mail', mail)
+      let routePath = ''
 
-      axios.post(route('wika.general'), data)
+      switch (dataModal.headers.title) {
+        case 'Wika':
+          routePath = 'wika.general'
+          break;
+        case 'Swagelo':
+          routePath = 'swagelo.general'
+          break;
+      
+        default:
+          break;
+      }
+
+      axios.post(route(routePath), data)
       .then(res => {
         console.log(res.data);
         setSkeleton(true)
