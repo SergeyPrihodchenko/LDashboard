@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Compaigns;
 
 use App\Http\Controllers\Controller;
+use App\Models\DirectSwagelo;
 use App\Models\DirectWika;
 use App\Models\WikaInvoice;
 use App\Models\WikaVisitor;
@@ -12,7 +13,7 @@ use Inertia\Inertia;
 
 class CompaignsController extends Controller
 {
-    public function index()
+    public function indexWika()
     {
         $direct = DirectWika::all('CampaignId', 'CampaignName', 'AdGroupId', 'AdGroupName', 'Clicks', 'Cost', 'Date');
 
@@ -44,14 +45,76 @@ class CompaignsController extends Controller
             }
         }
 
-        return Inertia::render('Compaigns', ['data' => $data]);
+        $data['routePath'] = 'wika';
+
+        return Inertia::render('CompaignsPage', ['data' => $data]);
     }
 
-    public function invoiceClientByDirect(): array
+    public function indexSwagelo()
+    {
+        $direct = DirectSwagelo::all('CampaignId', 'CampaignName', 'AdGroupId', 'AdGroupName', 'Clicks', 'Cost', 'Date');
+
+        $data = [];
+        $data['direct'] = [];
+
+        foreach ($direct as $key => $value) {
+            if(!array_key_exists($value['CampaignId'], $data['direct'])) {
+                $data['direct'][$value['CampaignId']] = [
+                    'campaignName' => $value['CampaignName'],
+                    'AdGroupId' => [$value['AdGroupId'] => ['name' => $value['CampaignName'], 'cost' => (float)$value['cost']]],
+                    'cost' => (float)$value['Cost']
+                ];
+            } else {
+                if(!array_key_exists($value['AdGroupId'], $data['direct'][$value['CampaignId']]['AdGroupId']))
+                {
+                    $data['direct'][$value['CampaignId']]['AdGroupId'][$value['AdGroupId']] = ['name' => $value['AdGroupName'], 'cost' => (float)$value['Cost']];
+                } else {
+                    $data['direct'][$value['CampaignId']]['AdGroupId'][$value['AdGroupId']]['cost'] += (float)$value['Cost'];
+                }
+                $data['direct'][$value['CampaignId']]['cost'] += (float)$value['Cost'];
+            }
+        }
+
+        foreach ($data['direct'] as $key => $value) {
+            $data['direct'][$key]['cost'] = number_format($value['cost'], 2, '.', '');
+            foreach ($value['AdGroupId'] as $i => $el) {
+                $data['direct'][$key]['AdGroupId'][$i]['cost'] = number_format($el['cost'], 2, '.', '');
+            }
+        }
+
+        $data['routePath'] = 'swagelo';
+
+        return Inertia::render('CompaignsPage', ['data' => $data]);
+    }
+
+    public function invoiceClientByDirectWika(): array
     {
         $data = [];
 
         $yandex = new Yandex(env('AUTH_TOKEN_METRIC_WIKA'), env('COUNTER_ID_METRIC_WIKA'));
+
+        $metrics = $yandex->metricCompaign();
+
+        $metricsByCompany = $this->parserForMetricByCompaign($metrics['data']);
+        $metricsByGroup = $this->parserForMetricByGroup($metrics['data']);
+
+        $sortClientsByCompaign = $this->findClientForCompaign($metricsByCompany);
+        $sortClientsByGroup = $this->findClientForGroup($metricsByGroup);
+
+        $clientsDataByCompaign = $this->findClientsInInvoice($sortClientsByCompaign);
+        $clientsDataByGroup = $this->findClientsInInvoice($sortClientsByGroup);
+
+        $data['clientsByGroup'] = $clientsDataByGroup;
+        $data['clientsByCompaign'] = $clientsDataByCompaign;
+
+        return $data;
+    }
+
+    public function invoiceClientByDirectSwagelo(): array
+    {
+        $data = [];
+
+        $yandex = new Yandex(env('AUTH_TOKEN_METRIC_SWAGELO'), env('COUNTER_ID_METRIC_SWAGELO'));
 
         $metrics = $yandex->metricCompaign();
 

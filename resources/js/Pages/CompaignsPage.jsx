@@ -25,14 +25,30 @@ const Compaigns = ({data}) => {
 
     console.log(data);
 
-    const [compaigns, setCompaigns] = useState(preparation(data.direct))
-    const [clients, setClients] = useState([])
-    const [chart, setChart] = useState('')
-    const chartRef = createRef(null)
+    const [compaigns, setCompaigns] = useState(preparation(data.direct));
+    const [clients, setClients] = useState([]);
+    const [chart, setChart] = useState('');
+    const chartRef = createRef(null);
+    const [routePath, ] = useState(data.routePath);
 
     const fetchInvoice = () => {
 
-        axios.post(route('compaigns.wika.invoice'))
+        let routing = 'compaigns.wika.invoice'
+
+        switch (routePath) {
+            case 'wika':
+                routing = 'compaigns.wika.invoice'
+                break;
+
+            case 'swagelo':
+                routing = 'compaigns.swagelo.invoice'
+                break;
+        
+            default:
+                break;
+        }
+
+        axios.post(route(routing))
         .then(result => {
             console.log(result.data);
             setClients(result.data)
