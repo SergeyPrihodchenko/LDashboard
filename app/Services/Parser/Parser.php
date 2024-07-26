@@ -8,10 +8,10 @@ use Exception;
 
 class Parser {
 
-    public static function recordingCSV($data)
+    public static function recordingCSV($data, $title)
     {
         try {
-            $file_path = __DIR__ . '/../../../tmp/direct_'.date('Y-m-d').'.csv';
+            $file_path = __DIR__ . '/../../../tmp/direct_'.$title.'_'.date('Y-m-d').'.csv';
 
             file_put_contents($file_path, $data);
 
@@ -23,7 +23,7 @@ class Parser {
 
     private static function fileRecordingDirect()
     {
-        $file_path = __DIR__ . '/../../../tmp/direct_'.date('Y-m-d').'.csv';
+        $file_path = __DIR__ . '/../../../tmp/direct_wika_'.date('Y-m-d').'.csv';
 
         $yandex = new Yandex($_SERVER['AUTH_TOKEN_DIRECT']);
 
@@ -46,7 +46,7 @@ class Parser {
 
     public static function fileReader()
     {
-        $file_path = __DIR__ . '/../../../tmp/direct_'.date('Y-m-d').'.csv';
+        $file_path = __DIR__ . '/../../../tmp/direct_wika_'.date('Y-m-d').'.csv';
         self::fileRecordingDirect();
 
         try {

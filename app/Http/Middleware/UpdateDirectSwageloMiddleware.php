@@ -2,17 +2,18 @@
 
 namespace App\Http\Middleware;
 
-use App\Jobs\UpdateDirect;
-use App\Models\DirectWika;
-use App\Models\WikaInvoice;
+use App\Jobs\UpdateDirectSwagelo;
+use App\Models\DirectSwagelo;
+use App\Models\SwageloInvoice;
 use App\Services\APIHook\Yandex;
 use App\Services\Parser\Parser;
 use Closure;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
-class UpdateDirectMiddlware
+class UpdateDirectSwageloMiddleware
 {
     /**
      * Handle an incoming request.
@@ -21,7 +22,7 @@ class UpdateDirectMiddlware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $lastDate = DirectWika::checkUpdate();
+        $lastDate = DirectSwagelo::checkUpdate();
         
         if(!$lastDate) {
 
@@ -29,18 +30,21 @@ class UpdateDirectMiddlware
 
         }
 
-        $yandex = new Yandex(env('AUTH_TOKEN_DIRECT'));
+        $date = new DateTime($lastDate);
+        $date->modify('+1 day');
 
-        $data = $yandex->directUpdate(WikaInvoice::CLIENT_LOGIN, uniqid(), $lastDate);
+        $yandex = new Yandex(env('AUTH_TOKEN_DIRECT_SWAGELO'));
 
-        $file_path = Parser::recordingCSV($data);
+        $data = $yandex->directUpdate(SwageloInvoice::CLIENT_LOGIN, uniqid(), $date->format('Y-m-d'));
+
+        $file_path = Parser::recordingCSV($data, 'swagelo');
 
         if(!$file_path) {
             Log::error("Ошибка при записи данных из директа в файл -- " . date('Y-m-d') . "\n");
             return $next($request);
         }
 
-        UpdateDirect::dispatch($file_path);
+        UpdateDirectSwagelo::dispatch($file_path);
 
         return $next($request);
     }

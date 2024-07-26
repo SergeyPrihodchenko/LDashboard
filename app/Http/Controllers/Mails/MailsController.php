@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Mails;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\Test;
+use App\Models\DirectSwagelo;
 use App\Models\DirectWika;
 use App\Models\HylokInvoice;
 use App\Models\SwageloInvoice;
@@ -90,26 +90,26 @@ class MailsController extends Controller
         foreach ($dataMetric['data'] as $value) {
 
             if($cmId = $this->serchCmId($dataMetric['data'][0]['dimensions'][2]['name'])) {
-            if(!array_key_exists(date("Y-m-d", strtotime($value['dimensions'][1]['name'])), $directs)) {
-                $metricParams['cmId'] = $cmId;
-                $metricParams['date'] = $value['dimensions'][1]['name'];
-                $metricParams['regionId'] = $value['dimensions'][4]['id'];
-                $metricParams['device'] = $value['dimensions'][5]['id'];
-                $direct = DirectWika::select('CampaignName', 'AdGroupName', 'Cost', 'LocationOfPresenceName', 'AvgCpc')
-                ->where('CampaignId', $metricParams['cmId']['CompaignId'])
-                ->where('AdGroupId', $metricParams['cmId']['AdGroupId'])
-                ->where('LocationOfPresenceId', $metricParams['regionId'])
-                ->where('Device', strtoupper($metricParams['device']))
-                ->where('Clicks', $countClicks)
-                ->where('Date', $metricParams['date'])
-                ->get()
-                ->toArray();
-                $directs[date("Y-m-d", strtotime($value['dimensions'][1]['name']))] = [
-                    'costClicks' => $direct[0]['Cost'],
-                    'avgCpc' => $direct[0]['AvgCpc'],
-                    'adGroupName' => $direct[0]['AdGroupName'],
-                    'campaignName' => $direct[0]['CampaignName']
-                ];
+                if(!array_key_exists(date("Y-m-d", strtotime($value['dimensions'][1]['name'])), $directs)) {
+                    $metricParams['cmId'] = $cmId;
+                    $metricParams['date'] = $value['dimensions'][1]['name'];
+                    $metricParams['regionId'] = $value['dimensions'][4]['id'];
+                    $direct = DirectWika::select('CampaignName', 'AdGroupName', 'Cost', 'LocationOfPresenceName', 'AvgCpc')
+                    ->where('CampaignId', $metricParams['cmId']['CompaignId'])
+                    ->where('AdGroupId', $metricParams['cmId']['AdGroupId'])
+                    ->where('LocationOfPresenceId', $metricParams['regionId'])
+                    ->where('Clicks', $countClicks)
+                    ->where('Date', $metricParams['date'])
+                    ->get()
+                    ->toArray();
+                    if(!empty($direct)) {
+                        $directs[date("Y-m-d", strtotime($value['dimensions'][1]['name']))] = [
+                            'costClicks' => $direct[0]['Cost'],
+                            'avgCpc' => $direct[0]['AvgCpc'],
+                            'adGroupName' => $direct[0]['AdGroupName'],
+                            'campaignName' => $direct[0]['CampaignName']
+                        ];
+                    }
                 }
             }
 
@@ -195,26 +195,26 @@ class MailsController extends Controller
         foreach ($dataMetric['data'] as $value) {
 
             if($cmId = $this->serchCmId($dataMetric['data'][0]['dimensions'][2]['name'])) {
-            if(!array_key_exists(date("Y-m-d", strtotime($value['dimensions'][1]['name'])), $directs)) {
-                $metricParams['cmId'] = $cmId;
-                $metricParams['date'] = $value['dimensions'][1]['name'];
-                $metricParams['regionId'] = $value['dimensions'][4]['id'];
-                $metricParams['device'] = $value['dimensions'][5]['id'];
-                $direct = DirectWika::select('CampaignName', 'AdGroupName', 'Cost', 'LocationOfPresenceName', 'AvgCpc')
-                ->where('CampaignId', $metricParams['cmId']['CompaignId'])
-                ->where('AdGroupId', $metricParams['cmId']['AdGroupId'])
-                ->where('LocationOfPresenceId', $metricParams['regionId'])
-                ->where('Device', strtoupper($metricParams['device']))
-                ->where('Clicks', $countClicks)
-                ->where('Date', $metricParams['date'])
-                ->get()
-                ->toArray();
-                $directs[date("Y-m-d", strtotime($value['dimensions'][1]['name']))] = [
-                    'costClicks' => $direct[0]['Cost'],
-                    'avgCpc' => $direct[0]['AvgCpc'],
-                    'adGroupName' => $direct[0]['AdGroupName'],
-                    'campaignName' => $direct[0]['CampaignName']
-                ];
+                if(!array_key_exists(date("Y-m-d", strtotime($value['dimensions'][1]['name'])), $directs)) {
+                    $metricParams['cmId'] = $cmId;
+                    $metricParams['date'] = $value['dimensions'][1]['name'];
+                    $metricParams['regionId'] = $value['dimensions'][4]['id'];
+                    $direct = DirectSwagelo::select('CampaignName', 'AdGroupName', 'Cost', 'LocationOfPresenceName', 'AvgCpc')
+                    ->where('CampaignId', $metricParams['cmId']['CompaignId'])
+                    ->where('AdGroupId', $metricParams['cmId']['AdGroupId'])
+                    ->where('LocationOfPresenceId', $metricParams['regionId'])
+                    ->where('Clicks', $countClicks)
+                    ->where('Date', $metricParams['date'])
+                    ->get()
+                    ->toArray();
+                    if(!empty($direct)) {
+                        $directs[date("Y-m-d", strtotime($value['dimensions'][1]['name']))] = [
+                            'costClicks' => $direct[0]['Cost'],
+                            'avgCpc' => $direct[0]['AvgCpc'],
+                            'adGroupName' => $direct[0]['AdGroupName'],
+                            'campaignName' => $direct[0]['CampaignName']
+                        ];
+                    }
                 }
             }
 

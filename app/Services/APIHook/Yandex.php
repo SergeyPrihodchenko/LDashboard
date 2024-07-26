@@ -15,7 +15,7 @@ final class Yandex {
     )
     {
         $this->token = $token;
-        $this->dateFrom = date('Y-m-d', mktime(0,0,0,0,0,2024));
+        $this->dateFrom = date('Y-m-d', mktime(0,0,0,0,0,2023));
         $this->dateTo = date('Y-m-d');
     }
 

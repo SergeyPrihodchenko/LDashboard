@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DirectWika extends Model
+class DirectSwagelo extends Model
 {
     use HasFactory;
 
-    protected $table = 'direct_wika';
+    protected $table = 'direct_swagelo';
 
     protected $fillable = [  
         'CampaignId',

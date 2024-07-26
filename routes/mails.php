@@ -3,11 +3,14 @@
 use App\Http\Controllers\Mails\MailsController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['directUpdate'])->group(function () {
+Route::middleware(['directWikaUpdate'])->group(function () {
     Route::get('/mails/wika', [MailsController::class, 'indexWika'])->name('wika');
 });
 
-Route::get('/mails/swagelo', [MailsController::class, 'indexSwagelo'])->name('swagelo');
+Route::middleware(['directSwageloUpdate'])->group(function () {
+    Route::get('/mails/swagelo', [MailsController::class, 'indexSwagelo'])->name('swagelo');
+});
+
 Route::post('/mails/swagelo', [MailsController::class, 'swageloGeneral'])->name('swagelo.general');
 
 Route::get('/mails/hylok', [MailsController::class, 'indexHylok'])->name('hylok');

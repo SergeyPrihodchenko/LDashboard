@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'directUpdate' => \App\Http\Middleware\UpdateDirectMiddlware::class
+        'directWikaUpdate' => \App\Http\Middleware\UpdateDirectWikaMiddlware::class,
+        'directSwageloUpdate' => \App\Http\Middleware\UpdateDirectSwageloMiddleware::class
     ];
 }

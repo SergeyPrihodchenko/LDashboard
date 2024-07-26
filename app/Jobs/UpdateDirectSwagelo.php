@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Direct;
+use App\Models\DirectSwagelo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -10,7 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class UpdateDirect implements ShouldQueue
+class UpdateDirectSwagelo implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -32,7 +32,7 @@ class UpdateDirect implements ShouldQueue
 
         try {
             while ($row = fgetcsv($stream, null, "\t")) {
-                Direct::create([
+                DirectSwagelo::create([
                     'CampaignId' => $row[0],
                     'LocationOfPresenceId' => $row[1],
                     'LocationOfPresenceName' => $row[2],
