@@ -114,7 +114,7 @@ class CompaignsController extends Controller
     {
         $data = [];
 
-        $yandex = new Yandex(env('AUTH_TOKEN_METRIC_SWAGELO'), env('COUNTER_ID_METRIC_SWAGELO'));
+        $yandex = new Yandex(env('AUTH_TOKEN_DIRECT_SWAGELO_HY_LOK'), env('COUNTER_ID_METRIC_SWAGELO'));
 
         $metrics = $yandex->metricCompaign();
 

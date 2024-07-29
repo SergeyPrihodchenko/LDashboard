@@ -7,7 +7,8 @@ const ControlPanelComponent = ({title}) => {
     const state = {
         wika: false,
         swagelo: false,
-        hylok: false
+        hylok: false,
+        hy_lok: false,
     }
 
     const [checkDisabled, setCheckDisabled] = useState(state);
@@ -22,6 +23,9 @@ const ControlPanelComponent = ({title}) => {
                 break;
             case 'hylok':
                 setCheckDisabled({...checkDisabled, hylok: true})
+                break;
+            case 'hy-lok':
+                setCheckDisabled({...checkDisabled, hy_lok: true})
                 break;
         
             default:
@@ -41,6 +45,9 @@ const ControlPanelComponent = ({title}) => {
                     </Link>
                     <Link href={route('hylok')}>
                         <Button disabled={checkDisabled.hylok}>Hylok</Button>
+                    </Link>
+                    <Link href={route('chart.hy-lok')}>
+                        <Button disabled={checkDisabled.hy_lok}>Hy-lok</Button>
                     </Link>
                 </ButtonGroup>
             </Grid>

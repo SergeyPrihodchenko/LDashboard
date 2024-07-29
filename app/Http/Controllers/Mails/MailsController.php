@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DirectSwagelo;
 use App\Models\DirectWika;
 use App\Models\HylokInvoice;
+use App\Models\HyLokInvoice as ModelsHyLokInvoice;
 use App\Models\SwageloInvoice;
 use App\Models\SwageloVisitor;
 use App\Models\WikaInvoice;
@@ -35,6 +36,13 @@ class MailsController extends Controller
         $data = HylokInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
 
         return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'hylok']]);
+    }
+
+    public function indexHy_lok()
+    {
+        $data = ModelsHyLokInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
+
+        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'hy-lok']]);
     }
 
     public function wikaGeneral(Request $request)
@@ -186,7 +194,7 @@ class MailsController extends Controller
         $data['sum_price'] = $sumPrice;
         $data['client_ym_uid'] = $ym_uid[0]['_ym_uid'];
 
-        $yandex = new Yandex($_SERVER['AUTH_TOKEN_METRIC_SWAGELO'], $_SERVER['COUNTER_ID_METRIC_SWAGELO']);
+        $yandex = new Yandex($_SERVER['AUTH_TOKEN_METRIC_SWAGELO_HY_LOK'], $_SERVER['COUNTER_ID_METRIC_SWAGELO']);
 
         $dataMetric = $yandex->metricById($ym_uid[0]['_ym_uid']);
 

@@ -11,7 +11,6 @@ class HylokInvoice extends Model
 
     // protected $table = 'fluidline_hylok_InvoiceList';
 
-
     protected $connection = 'hylok';
 
     protected $table = 'InvoiceList';

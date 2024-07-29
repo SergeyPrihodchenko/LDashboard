@@ -15,4 +15,6 @@ Route::post('/mails/swagelo', [MailsController::class, 'swageloGeneral'])->name(
 
 Route::get('/mails/hylok', [MailsController::class, 'indexHylok'])->name('hylok');
 
+Route::get('/mails/hy-lok', [MailsController::class, 'indexHy_lok'])->name('hy-lok');
+
 Route::post('/mails/wika', [MailsController::class, 'wikaGeneral'])->name('wika.general');

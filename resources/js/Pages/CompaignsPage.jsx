@@ -2,7 +2,7 @@ import ControlPanelComponent from '@/Components/Compaigns/ControlPanelComponent'
 import AccordionCompaign from '@/Components/MUIComponents/Compaigns/Accordion';
 import StickySubheader from '@/Components/MUIComponents/Compaigns/StickySubheader';
 import Guest from '@/Layouts/GuestLayout';
-import { Box, Grid } from '@mui/material';
+import { Box, CircularProgress, Grid } from '@mui/material';
 import axios from 'axios';
 import Chart from 'chart.js/auto'
 import { createRef, useEffect, useState } from 'react';
@@ -30,6 +30,7 @@ const Compaigns = ({data}) => {
     const [chart, setChart] = useState('');
     const chartRef = createRef(null);
     const [routePath, ] = useState(data.routePath);
+    const [loader, setLoader] = useState(false);
 
     const fetchInvoice = () => {
 
@@ -52,6 +53,7 @@ const Compaigns = ({data}) => {
         .then(result => {
             console.log(result.data);
             setClients(result.data)
+            setLoader(true)
         })
         .catch(err => {
             console.log(err);
@@ -111,7 +113,13 @@ const Compaigns = ({data}) => {
             <Grid container>
                 <Grid item xs={7}>
                     {/* {parser(data.direct)} */}
-                    <StickySubheader direct={data.direct} clients={clients}/>
+                    {!loader  
+                        ?
+                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'start', height: '100%', marginLeft: 35 }}>
+                            <CircularProgress size={50}/>
+                        </Box>
+                        : 
+                        <StickySubheader direct={data.direct} clients={clients}/>}
                 </Grid>
                 <Grid item xs={5}><canvas style={{width: '600px', height: '300px', margin: '0 auto'}} onLoad={load} ref={chartRef} id="acquisitions"></canvas></Grid>
             </Grid>
