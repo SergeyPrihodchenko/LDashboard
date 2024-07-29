@@ -142,10 +142,10 @@ export default function TableComponent({data}) {
       let routePath = ''
 
       switch (dataModal.headers.title) {
-        case 'Wika':
+        case 'wika':
           routePath = 'wika.general'
           break;
-        case 'Swagelo':
+        case 'swagelo':
           routePath = 'swagelo.general'
           break;
       

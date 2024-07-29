@@ -161,7 +161,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
 
     return (
         <Guest>
-            <ControlPanelComponent/>
+            <ControlPanelComponent title={title}/>
             <hr />
             <Grid item xs={8}>
                 <Container sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', gap: '10px'}}>

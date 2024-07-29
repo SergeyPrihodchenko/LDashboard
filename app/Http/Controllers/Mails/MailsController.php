@@ -20,21 +20,21 @@ class MailsController extends Controller
     {
         $data = WikaInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
 
-        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'Wika']]);
+        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'wika']]);
     }
 
     public function indexSwagelo()
     {
         $data = SwageloInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
 
-        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'Swagelo']]);
+        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'swagelo']]);
     }
 
     public function indexHylok()
     {
         $data = HylokInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
 
-        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'Hylok']]);
+        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'hylok']]);
     }
 
     public function wikaGeneral(Request $request)
@@ -87,6 +87,7 @@ class MailsController extends Controller
         $countClicks = count($dataMetric['data']);
         $data['countClicks'] = $countClicks;
         $directs = [];
+
         foreach ($dataMetric['data'] as $value) {
 
             if($cmId = $this->serchCmId($dataMetric['data'][0]['dimensions'][2]['name'])) {

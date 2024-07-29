@@ -105,7 +105,7 @@ const Compaigns = ({data}) => {
 
     return (
         <Guest>
-            <ControlPanelComponent/>
+            <ControlPanelComponent title={data.routePath}/>
             <hr />
             <br/>
             <Grid container>

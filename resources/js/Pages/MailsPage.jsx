@@ -4,10 +4,10 @@ import Guest from "@/Layouts/GuestLayout";
 import { Container } from "@mui/material";
 
 const MailsPage = ({data}) => {
-
+console.log(data);
     return (
         <Guest>
-            <ControlPanelComponent/>
+            <ControlPanelComponent title={data.title}/>
             <Container maxWidth={'1600px'}>
                 <TableComponent data={data}/>
             </Container>
