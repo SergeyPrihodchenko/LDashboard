@@ -13,7 +13,10 @@ Route::middleware(['directSwageloUpdate'])->group(function () {
 
 Route::post('/mails/swagelo', [MailsController::class, 'swageloGeneral'])->name('swagelo.general');
 
-Route::get('/mails/hylok', [MailsController::class, 'indexHylok'])->name('hylok');
+Route::middleware(['directHylokUpdate'])->group(function () {
+    Route::get('/mails/hylok', [MailsController::class, 'indexHylok'])->name('hylok');
+});
+
 
 Route::get('/mails/hy-lok', [MailsController::class, 'indexHy_lok'])->name('hy-lok');
 

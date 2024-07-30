@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\UpdateDirectHylokMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -67,6 +68,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'directWikaUpdate' => \App\Http\Middleware\UpdateDirectWikaMiddlware::class,
-        'directSwageloUpdate' => \App\Http\Middleware\UpdateDirectSwageloMiddleware::class
+        'directSwageloUpdate' => \App\Http\Middleware\UpdateDirectSwageloMiddleware::class,
+        'directHylokUpdate' => UpdateDirectHylokMiddleware::class
     ];
 }

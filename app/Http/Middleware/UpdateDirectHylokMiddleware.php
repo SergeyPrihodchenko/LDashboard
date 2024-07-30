@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use App\Jobs\UpdateDirectSwagelo;
-use App\Models\DirectSwagelo;
-use App\Models\SwageloInvoice;
+use App\Jobs\UpdateDirectHylok as JobsUpdateDirectHylok;
+use App\Models\DirectHylok;
+use App\Models\HylokInvoice;
 use App\Services\APIHook\Yandex;
 use App\Services\Parser\Parser;
 use Closure;
@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
-class UpdateDirectSwageloMiddleware
+class UpdateDirectHylokMiddleware
 {
     /**
      * Handle an incoming request.
@@ -22,7 +22,7 @@ class UpdateDirectSwageloMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $lastDate = DirectSwagelo::checkUpdate();
+        $lastDate = DirectHylok::checkUpdate();
         
         if(!$lastDate) {
 
@@ -33,18 +33,18 @@ class UpdateDirectSwageloMiddleware
         $date = new DateTime($lastDate);
         $date->modify('+1 day');
 
-        $yandex = new Yandex(env('AUTH_TOKEN_DIRECT_SWAGELO_HY_LOK'));
+        $yandex = new Yandex(env('AUTH_TOKEN_DIRECT_HYLOK'));
 
-        $data = $yandex->directUpdate(SwageloInvoice::CLIENT_LOGIN, uniqid(), $date->format('Y-m-d'));
+        $data = $yandex->directUpdate(HylokInvoice::CLIENT_LOGIN, uniqid(), $date->format('Y-m-d'));
 
-        $file_path = Parser::recordingCSV($data, 'swagelo');
+        $file_path = Parser::recordingCSV($data, 'hylok');
 
         if(!$file_path) {
             Log::error("Ошибка при записи данных из директа в файл -- " . date('Y-m-d') . "\n");
             return $next($request);
         }
 
-        UpdateDirectSwagelo::dispatch($file_path);
+        JobsUpdateDirectHylok::dispatch($file_path);
 
         return $next($request);
     }

@@ -43,7 +43,7 @@ const ControlPanelComponent = ({title}) => {
                     <Link href={route('chart.swagelo')}>
                         <Button disabled={checkDisabled.swagelo}>Swagelo</Button>
                     </Link>
-                    <Link href={route('hylok')}>
+                    <Link href={route('chart.hylok')}>
                         <Button disabled={checkDisabled.hylok}>Hylok</Button>
                     </Link>
                     <Link href={route('chart.hy-lok')}>
