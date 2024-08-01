@@ -35,7 +35,7 @@ class UpdateDirectHylokMiddleware
 
         $yandex = new Yandex(env('AUTH_TOKEN_DIRECT_HYLOK'));
 
-        $data = $yandex->directUpdate(HylokInvoice::CLIENT_LOGIN, uniqid(), $date->format('Y-m-d'));
+        $data = $yandex->directUpdate(env('CLIENT_LOGIN_HYLOK'), uniqid(), $date->format('Y-m-d'));
 
         $file_path = Parser::recordingCSV($data, 'hylok');
 

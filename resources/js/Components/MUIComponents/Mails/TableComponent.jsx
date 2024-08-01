@@ -148,6 +148,9 @@ export default function TableComponent({data}) {
         case 'swagelo':
           routePath = 'swagelo.general'
           break;
+        case 'hylok':
+          routePath = 'hylok.general'
+          break;
       
         default:
           break;

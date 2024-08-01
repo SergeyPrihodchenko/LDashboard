@@ -17,6 +17,7 @@ Route::middleware(['directHylokUpdate'])->group(function () {
     Route::get('/mails/hylok', [MailsController::class, 'indexHylok'])->name('hylok');
 });
 
+Route::post('/mails/hylok', [MailsController::class, 'hylokGeneral'])->name('hylok.general');
 
 Route::get('/mails/hy-lok', [MailsController::class, 'indexHy_lok'])->name('hy-lok');
 

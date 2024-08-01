@@ -35,7 +35,7 @@ class UpdateDirectWikaMiddlware
 
         $yandex = new Yandex(env('AUTH_TOKEN_DIRECT_WIKA'));
 
-        $data = $yandex->directUpdate(WikaInvoice::CLIENT_LOGIN, uniqid(), $date->format('Y-m-d'));
+        $data = $yandex->directUpdate(env('CLIENT_LOGIN_WIKA'), uniqid(), $date->format('Y-m-d'));
 
         $file_path = Parser::recordingCSV($data, 'wika');
 

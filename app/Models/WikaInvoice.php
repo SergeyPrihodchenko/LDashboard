@@ -14,6 +14,4 @@ class WikaInvoice extends Model
     protected $table = 'InvoiceList';
 
     // protected $table = 'fluidline_wika_InvoiceList';
-
-    public const CLIENT_LOGIN = 'av-wika-ads@yandex.ru';
 }

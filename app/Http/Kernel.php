@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\UpdateDirectHylokMiddleware;
+use App\Http\Middleware\UpdateDirectMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -67,6 +68,7 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'updateDirect' => UpdateDirectMiddleware::class,
         'directWikaUpdate' => \App\Http\Middleware\UpdateDirectWikaMiddlware::class,
         'directSwageloUpdate' => \App\Http\Middleware\UpdateDirectSwageloMiddleware::class,
         'directHylokUpdate' => UpdateDirectHylokMiddleware::class

@@ -35,7 +35,7 @@ class UpdateDirectSwageloMiddleware
 
         $yandex = new Yandex(env('AUTH_TOKEN_DIRECT_SWAGELO_HY_LOK'));
 
-        $data = $yandex->directUpdate(SwageloInvoice::CLIENT_LOGIN, uniqid(), $date->format('Y-m-d'));
+        $data = $yandex->directUpdate(env('CLIENT_LOGIN_SWAGELO_HY_LOK'), uniqid(), $date->format('Y-m-d'));
 
         $file_path = Parser::recordingCSV($data, 'swagelo');
 

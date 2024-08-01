@@ -190,7 +190,7 @@ final class Yandex {
 
         if($status == '202') {
 
-            sleep(5);
+            sleep(2);
 
             $request = $client->request('POST', Yandex::YANDEX_DIRECT_URL, [
                 'headers' => [
@@ -218,7 +218,7 @@ final class Yandex {
 
         if ($status == '201') {
             
-            sleep(3);
+            sleep(2);
 
             $request = $client->request('POST', Yandex::YANDEX_DIRECT_URL, [
                 'headers' => [

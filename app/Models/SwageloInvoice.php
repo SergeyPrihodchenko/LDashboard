@@ -14,7 +14,5 @@ class SwageloInvoice extends Model
     protected $connection = 'swagelo';
 
     protected $table = 'InvoiceList';
-
-    public const CLIENT_LOGIN = 'av-hylok@yandex.ru';
     
 }
