@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class HyLokInvoice extends Model
+class Hy_LokPhone extends Model
 {
     use HasFactory;
 
-    public $table = 'fluidline_hy_lok_InvoiceList';
+    protected $connection = 'hy-lok';
+    protected $table = 'calls_data';
 }

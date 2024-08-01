@@ -58,7 +58,30 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
         data.set('dateFrom', dateFrom)
         data.set('dateTo', dateTo)
 
-        axios.post(route('chart.whika'), data)
+        let routePath = '';
+
+        switch (titleSite) {            
+            case 'wika':
+                routePath = 'chart.wika.byDate'
+                break;
+
+            case 'swagelo':
+                routePath = 'chart.swagelo.byDate'
+                break;
+
+            case 'hylok':
+                routePath = 'chart.hylok.byDate'
+                break;
+
+            case 'hy-lok':
+                routePath = 'chart.hy-lok.byDate'
+                break;
+        
+            default:
+                break;
+        }
+
+        axios.post(route(routePath), data)
         .then(res => {
             setInvoiceData({...invoiveData, 
                 countMails: res.data.countMails,
@@ -105,6 +128,14 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
 
             case 'swagelo':
                 routePath = 'chart.swagelo.direct'
+                break;
+
+            case 'hylok':
+                routePath = 'chart.hylok.direct'
+                break;
+
+            case 'hy-lok':
+                routePath = 'chart.hy-lok.direct'
                 break;
         
             default:

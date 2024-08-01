@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Http\Controllers\Mails;
+
+use App\Http\Controllers\Controller;
+use App\Models\DirectSwagelo;
+use App\Models\HyLokInvoice;
+use App\Models\HylokVisitor;
+use Illuminate\Http\Request;
+
+class MailsHy_lokController extends MailsController
+{
+    protected string $title = 'hy-lok';
+
+    public function __construct()
+    {
+        parent::__construct(
+            new HyLokInvoice(),
+            new HylokVisitor(), // mokeeeeee
+            env('AUTH_TOKEN_METRIC_SWAGELO_HY_LOK'),
+            env('COUNTER_ID_METRIC_HY_LOK'),
+            new DirectSwagelo()
+        );
+    }
+}

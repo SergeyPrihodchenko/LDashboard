@@ -42,10 +42,10 @@ const ControlPanelComponent = ({title}) => {
                     <Link href={route('compaigns.swagelo')}>
                         <Button disabled={checkDisabled.swagelo}>Swagelo</Button>
                     </Link>
-                    <Link href={route('hylok')}>
+                    <Link href={route('compaigns.hylok')}>
                         <Button disabled={checkDisabled.hylok}>Hylok</Button>
                     </Link>
-                    <Link href={route('hy-lok')}>
+                    <Link href={route('compaigns.hy-lok')}>
                         <Button disabled={checkDisabled.hy_lok}>Hy-lok</Button>
                     </Link>
                 </ButtonGroup>

@@ -44,6 +44,14 @@ const Compaigns = ({data}) => {
             case 'swagelo':
                 routing = 'compaigns.swagelo.invoice'
                 break;
+                
+            case 'hylok':
+                routing = 'compaigns.hylok.invoice'
+                break;
+
+            case 'hy-lok':
+                routing = 'compaigns.hy-lok.invoice'
+                break;
         
             default:
                 break;

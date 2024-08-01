@@ -3,248 +3,48 @@
 namespace App\Http\Controllers\Mails;
 
 use App\Http\Controllers\Controller;
-use App\Models\DirectSwagelo;
-use App\Models\DirectWika;
-use App\Models\HylokInvoice;
-use App\Models\HyLokInvoice as ModelsHyLokInvoice;
-use App\Models\HylokVisitor;
-use App\Models\SwageloInvoice;
-use App\Models\SwageloVisitor;
-use App\Models\WikaInvoice;
-use App\Models\WikaVisitor;
 use App\Services\APIHook\Yandex;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class MailsController extends Controller
+abstract class MailsController extends Controller
 {
-    public function indexWika()
-    {
-        $data = WikaInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
 
-        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'wika']]);
-    }
-
-    public function indexSwagelo()
-    {
-        $data = SwageloInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
-
-        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'swagelo']]);
-    }
-
-    public function indexHylok()
-    {
-        $data = HylokInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
-
-        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'hylok']]);
-    }
-
-    public function indexHy_lok()
-    {
-        $data = ModelsHyLokInvoice::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
-
-        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => 'hy-lok']]);
-    }
-
-    public function wikaGeneral(Request $request)
-    {
-        $mail = $request->post('mail');
-
-        $data1C = WikaInvoice::select('client_id', 'invoice_id', 'invoice_status', 'invoice_date', 'invoice_price', 'client_code', 'client_mail')->where('client_mail', $mail)->distinct()->get();
-
-        $ym_uid = WikaVisitor::select('_ym_uid')->where('client_id', $data1C[0]['client_id'])->limit(1)->get();
-
-        $data = [];
-        $sumPrice = 0;
-
-        if(empty($ym_uid[0]['_ym_uid'])) {
-            return $this->parse1CData($data1C);
-        }
-
-
-        foreach ($data1C as $el) {
-            $el['title'] = '1С';
-            if($el['invoice_status'] == 2) {
-                $sumPrice += $el['invoice_price'];
-            }
-            $data['data'][date("Y-m-d", strtotime($el['invoice_date']))][] = $el;
-        }
-
-        $data['client_code'] = $data1C[0]['client_code'];
-        $data['client_mail'] = $data1C[0]['client_mail'];
-        $data['client_id'] = $data1C[0]['client_id'];
-        $data['sum_price'] = $sumPrice;
-        $data['client_ym_uid'] = $ym_uid[0]['_ym_uid'];
-
-        $yandex = new Yandex($_SERVER['AUTH_TOKEN_METRIC_WIKA'], $_SERVER['COUNTER_ID_METRIC_WIKA']);
-
-        $dataMetric = $yandex->metricById($ym_uid[0]['_ym_uid']);
-
-        $countClicks = count($dataMetric['data']);
-        $data['countClicks'] = $countClicks;
-        $directs = [];
-
-        foreach ($dataMetric['data'] as $key => $value) {
-
-            if($cmId = $this->serchCmId($dataMetric['data'][0]['dimensions'][2]['name'])) {
-                if(!array_key_exists(date("Y-m-d", strtotime($value['dimensions'][1]['name'])), $directs)) {
-                    $metricParams['cmId'] = $cmId;
-                    $metricParams['date'] = $value['dimensions'][1]['name'];
-                    $metricParams['regionId'] = $value['dimensions'][4]['id'];
-                    $direct = DirectWika::select('CampaignName', 'AdGroupName', 'Cost', 'LocationOfPresenceName', 'AvgCpc')
-                    ->where('CampaignId', $metricParams['cmId']['CompaignId'])
-                    ->where('AdGroupId', $metricParams['cmId']['AdGroupId'])
-                    ->where('LocationOfPresenceId', $metricParams['regionId'])
-                    ->where('Clicks', $countClicks)
-                    ->where('Date', $metricParams['date'])
-                    ->get()
-                    ->toArray();
-                    if(!empty($direct)) {
-                        $directs[date("Y-m-d", strtotime($value['dimensions'][1]['name']))] = [
-                            'costClicks' => $direct[0]['Cost'],
-                            'avgCpc' => $direct[0]['AvgCpc'],
-                            'adGroupName' => $direct[0]['AdGroupName'],
-                            'campaignName' => $direct[0]['CampaignName']
-                        ];
-                    }
-                }
-            }
-
-            $path = $value['dimensions'][2]['name'];
-            if(strripos($value['dimensions'][2]['name'], '?') !== false) {
-                $path = mb_substr($value['dimensions'][2]['name'], 0, strripos($value['dimensions'][2]['name'], '?'));
-            }
-
-            $data['data'][date("Y-m-d", strtotime($value['dimensions'][1]['name']))][] = [
-                'title' => 'Яндекс',
-                'client_id' => $value['dimensions'][0]['name'],
-                'date' => $value['dimensions'][1]['name'],
-                'url' => $path,
-                'favicon' => $value['dimensions'][2]['favicon'],
-                'keyPhrase' => $value['dimensions'][3]['name'],
-                'meric_visits' => $value['metrics'][0],
-                'meric_users' => $value['metrics'][1],
-                'avgCpc' => isset($direct[0]['AvgCpc']) ? $direct[0]['AvgCpc'] : null,
-                'adGroupName' => isset($direct[0]['AdGroupName']) ? $direct[0]['AdGroupName'] : null,
-                'campaignName' => isset($direct[0]['CampaignName']) ? $direct[0]['CampaignName'] : null,
-                'city' => isset($direct[0]['LocationOfPresenceName']) ? $direct[0]['LocationOfPresenceName'] : null
-            ];
-
-            unset($dataMetric['data'][$key]);
-        }
-
-        $sumCost = 0;
-        foreach ($directs as $direct) {
-            $sumCost += (float) $direct['costClicks'];
-        }
-        $data['costClicks'] = $sumCost;
-
-        return $data;
-    }
-
-    public function swageloGeneral(Request $request)
-    {
-        $mail = $request->post('mail');
-
-        $data1C = SwageloInvoice::select('client_id', 'invoice_id', 'invoice_status', 'invoice_date', 'invoice_price', 'client_code', 'client_mail')->where('client_mail', $mail)->distinct()->get();
-
-        $ym_uid = SwageloVisitor::select('_ym_uid')->where('client_id', $data1C[0]['client_id'])->limit(1)->get();
-
-        $data = [];
-        $sumPrice = 0;
-
-        if(empty($ym_uid[0]['_ym_uid'])) {
-            return $this->parse1CData($data1C);
-        }
-
-
-
-        foreach ($data1C as $el) {
-            $el['title'] = '1С';
-            if($el['invoice_status'] == 2) {
-                $sumPrice += $el['invoice_price'];
-            }
-            $data['data'][date("Y-m-d", strtotime($el['invoice_date']))][] = $el;
-        }
-
-        $data['client_code'] = $data1C[0]['client_code'];
-        $data['client_mail'] = $data1C[0]['client_mail'];
-        $data['client_id'] = $data1C[0]['client_id'];
-        $data['sum_price'] = $sumPrice;
-        $data['client_ym_uid'] = $ym_uid[0]['_ym_uid'];
-
-        $yandex = new Yandex($_SERVER['AUTH_TOKEN_METRIC_SWAGELO_HY_LOK'], $_SERVER['COUNTER_ID_METRIC_SWAGELO']);
-
-        $dataMetric = $yandex->metricById($ym_uid[0]['_ym_uid']);
-
-        $countClicks = count($dataMetric['data']);
-        $data['countClicks'] = $countClicks;
-        $directs = [];
-        foreach ($dataMetric['data'] as $key => $value) {
-
-            if($cmId = $this->serchCmId($dataMetric['data'][0]['dimensions'][2]['name'])) {
-                if(!array_key_exists(date("Y-m-d", strtotime($value['dimensions'][1]['name'])), $directs)) {
-                    $metricParams['cmId'] = $cmId;
-                    $metricParams['date'] = $value['dimensions'][1]['name'];
-                    $metricParams['regionId'] = $value['dimensions'][4]['id'];
-                    $direct = DirectSwagelo::select('CampaignName', 'AdGroupName', 'Cost', 'LocationOfPresenceName', 'AvgCpc')
-                    ->where('CampaignId', $metricParams['cmId']['CompaignId'])
-                    ->where('AdGroupId', $metricParams['cmId']['AdGroupId'])
-                    ->where('LocationOfPresenceId', $metricParams['regionId'])
-                    ->where('Clicks', $countClicks)
-                    ->where('Date', $metricParams['date'])
-                    ->get()
-                    ->toArray();
-                    if(!empty($direct)) {
-                        $directs[date("Y-m-d", strtotime($value['dimensions'][1]['name']))] = [
-                            'costClicks' => $direct[0]['Cost'],
-                            'avgCpc' => $direct[0]['AvgCpc'],
-                            'adGroupName' => $direct[0]['AdGroupName'],
-                            'campaignName' => $direct[0]['CampaignName']
-                        ];
-                    }
-                }
-            }
-
-            $path = $value['dimensions'][2]['name'];
-            if(strripos($value['dimensions'][2]['name'], '?') !== false) {
-                $path = mb_substr($value['dimensions'][2]['name'], 0, strripos($value['dimensions'][2]['name'], '?'));
-            }
-
-            $data['data'][date("Y-m-d", strtotime($value['dimensions'][1]['name']))][] = [
-                'title' => 'Яндекс',
-                'client_id' => $value['dimensions'][0]['name'],
-                'date' => $value['dimensions'][1]['name'],
-                'url' => $path,
-                'favicon' => $value['dimensions'][2]['favicon'],
-                'keyPhrase' => $value['dimensions'][3]['name'],
-                'meric_visits' => $value['metrics'][0],
-                'meric_users' => $value['metrics'][1],
-                'avgCpc' => isset($direct[0]['AvgCpc']) ? $direct[0]['AvgCpc'] : null,
-                'adGroupName' => isset($direct[0]['AdGroupName']) ? $direct[0]['AdGroupName'] : null,
-                'campaignName' => isset($direct[0]['CampaignName']) ? $direct[0]['CampaignName'] : null,
-                'city' => isset($direct[0]['LocationOfPresenceName']) ? $direct[0]['LocationOfPresenceName'] : null
-            ];
-
-            unset($dataMetric['data'][$key]);
-        }
-
-        $sumCost = 0;
-        foreach ($directs as $direct) {
-            $sumCost += (float) $direct['costClicks'];
-        }
-        $data['costClicks'] = $sumCost;
-
-        return $data;
-    }
+    protected Model $model;
+    protected Model $modelVisits;
+    protected Yandex $yandex;
+    protected $direct;
+    protected string $title;
     
-    public function hylokGeneral(Request $request)
+    public function __construct(
+        $model,
+        $modelVisits,
+        $metricToken,
+        $metricCounter,
+        $direct
+    )
+    {
+        $this->model = $model;
+        $this->modelVisits = $modelVisits;
+        $this->yandex = new Yandex($metricToken, $metricCounter);
+        $this->direct = $direct;
+    }
+
+    public function index()
+    {
+        $data = $this->model::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
+
+        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => $this->title]]);
+    }
+
+    public function general(Request $request)
     {
         $mail = $request->post('mail');
 
-        $data1C = HylokInvoice::select('client_id', 'invoice_id', 'invoice_status', 'invoice_date', 'invoice_price', 'client_code', 'client_mail')->where('client_mail', $mail)->distinct()->get();
+        $data1C = $this->model::select('client_id', 'invoice_id', 'invoice_status', 'invoice_date', 'invoice_price', 'client_code', 'client_mail')->where('client_mail', $mail)->distinct()->get();
 
-        $ym_uid = HylokVisitor::select('_ym_uid')->where('client_id', $data1C[0]['client_id'])->limit(1)->get();
+        $ym_uid = $this->modelVisits::select('_ym_uid')->where('client_id', $data1C[0]['client_id'])->limit(1)->get();
 
         $data = [];
         $sumPrice = 0;
@@ -252,7 +52,6 @@ class MailsController extends Controller
         if(empty($ym_uid[0]['_ym_uid'])) {
             return $this->parse1CData($data1C);
         }
-
 
 
         foreach ($data1C as $el) {
@@ -269,13 +68,12 @@ class MailsController extends Controller
         $data['sum_price'] = $sumPrice;
         $data['client_ym_uid'] = $ym_uid[0]['_ym_uid'];
 
-        $yandex = new Yandex($_SERVER['AUTH_TOKEN_METRIC_HYLOK'], $_SERVER['COUNTER_ID_METRIC_HYLOK']);
-
-        $dataMetric = $yandex->metricById($ym_uid[0]['_ym_uid']);
+        $dataMetric = $this->yandex->metricById($ym_uid[0]['_ym_uid']);
 
         $countClicks = count($dataMetric['data']);
         $data['countClicks'] = $countClicks;
         $directs = [];
+
         foreach ($dataMetric['data'] as $key => $value) {
 
             if($cmId = $this->serchCmId($dataMetric['data'][0]['dimensions'][2]['name'])) {
@@ -283,7 +81,7 @@ class MailsController extends Controller
                     $metricParams['cmId'] = $cmId;
                     $metricParams['date'] = $value['dimensions'][1]['name'];
                     $metricParams['regionId'] = $value['dimensions'][4]['id'];
-                    $direct = DirectSwagelo::select('CampaignName', 'AdGroupName', 'Cost', 'LocationOfPresenceName', 'AvgCpc')
+                    $direct = $this->direct::select('CampaignName', 'AdGroupName', 'Cost', 'LocationOfPresenceName', 'AvgCpc')
                     ->where('CampaignId', $metricParams['cmId']['CompaignId'])
                     ->where('AdGroupId', $metricParams['cmId']['AdGroupId'])
                     ->where('LocationOfPresenceId', $metricParams['regionId'])

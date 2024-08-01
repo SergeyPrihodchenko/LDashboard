@@ -69,8 +69,5 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'updateDirect' => UpdateDirectMiddleware::class,
-        'directWikaUpdate' => \App\Http\Middleware\UpdateDirectWikaMiddlware::class,
-        'directSwageloUpdate' => \App\Http\Middleware\UpdateDirectSwageloMiddleware::class,
-        'directHylokUpdate' => UpdateDirectHylokMiddleware::class
     ];
 }
