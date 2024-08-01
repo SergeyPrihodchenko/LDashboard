@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Compaigns;
 
 use App\Http\Controllers\Controller;
-use App\Models\WikaInvoice;
-use App\Models\WikaVisitor;
 use App\Services\APIHook\Yandex;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -96,7 +94,13 @@ abstract class CompaignsController extends Controller
         $data = [];
 
         foreach ($metrics as $value) {
-            $data[$value['dimensions'][0]['name']][] = [
+            $compaignId = $value['dimensions'][0]['name'];
+            if(!preg_match('/^[0-9]+$/', $compaignId)) {
+                $expoldeCompaignId = explode('_', $compaignId);
+                $compaignId = $expoldeCompaignId[count($expoldeCompaignId) - 1];
+            }
+
+            $data[$compaignId][] = [
                 'compaignGroupId' => $this->prepare($value['dimensions'][1]['name']),
                 'clientId' => $value['dimensions'][2]['name'],
                 'date' => $value['dimensions'][3]['name'],

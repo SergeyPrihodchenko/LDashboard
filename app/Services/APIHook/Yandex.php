@@ -308,7 +308,7 @@ final class Yandex {
             'query' => [
                 'ids' => $this->counter_id,
                 'metrics' => 'ym:s:visits',
-                'date1' => '2024-01-31',
+                'date1' => '2023-04-01',
                 'date2' => $this->dateTo,
                 'dimensions' => 'ym:s:<attribution>UTMCampaign,ym:s:<attribution>UTMContent,ym:s:ClientID,ym:s:browserDate',
                 'limit' => 10000
