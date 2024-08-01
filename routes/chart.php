@@ -24,4 +24,4 @@ Route::post('/chart/hylok/direct', [ChartHylokController::class, 'fetchDirect'])
 
 Route::get('/hy-lok', [ChartHy_LokController::class, 'index'])->name('chart.hy-lok');
 Route::post('/chart/hy-lok', [ChartHy_LokController::class, 'dataByDate'])->name('chart.hy-lok.byDate');
-Route::post('/chart/swagelo/direct', [ChartHy_LokController::class, 'fetchDirect'])->name('chart.hy-lok.direct');
+Route::post('/chart/hy-lok/direct', [ChartHy_LokController::class, 'fetchDirect'])->name('chart.hy-lok.direct');
