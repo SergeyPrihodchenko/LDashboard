@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Mails;
 
-use App\Http\Controllers\Controller;
 use App\Models\DirectSwagelo;
 use App\Models\Hy_LokInvoice;
 use App\Models\HylokVisitor;

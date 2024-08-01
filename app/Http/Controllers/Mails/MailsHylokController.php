@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Mails;
 
-use App\Http\Controllers\Controller;
 use App\Models\DirectHylok;
 use App\Models\HylokInvoice;
 use App\Models\HylokVisitor;

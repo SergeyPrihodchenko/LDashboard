@@ -192,7 +192,7 @@ export default function TableComponent({data}) {
 
     return (
         <Paper sx={{ width: '100%', margin: '0 auto'}}>
-          <TableContainer sx={{ maxHeight: 600, display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+          <TableContainer sx={{ maxHeight: 600}}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>

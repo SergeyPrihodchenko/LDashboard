@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Chart;
 
-use App\Http\Controllers\Controller;
 use App\Models\DirectSwagelo;
 use App\Models\SateliPhone;
 use App\Models\SwageloInvoice;

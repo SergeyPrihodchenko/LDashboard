@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Mails;
 use App\Models\DirectWika;
 use App\Models\WikaInvoice;
 use App\Models\WikaVisitor;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class MailsWikaController extends MailsController

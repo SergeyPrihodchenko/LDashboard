@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Chart;
 
-use App\Http\Controllers\Controller;
 use App\Models\DirectWika;
 use App\Models\HylokInvoice;
 use App\Models\HylokPhone;

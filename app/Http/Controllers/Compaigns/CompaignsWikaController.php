@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Compaigns;
 
-use App\Http\Controllers\Controller;
 use App\Models\DirectWika;
 use App\Models\WikaInvoice;
 use App\Models\WikaVisitor;

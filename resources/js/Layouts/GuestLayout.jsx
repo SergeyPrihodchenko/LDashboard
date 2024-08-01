@@ -12,7 +12,7 @@ export default function Guest({ children }) {
                         <Header/>
                     </Grid>
                 </Grid>
-                <Grid container sx={{maxWidth: '1600px', width: '100%', padding: '15px 0', margin: '0 auto'}}>
+                <Grid container sx={{maxWidth: '1600px', width: '100%', padding: '15px 0', margin: '0 auto', height: '100%'}}>
                     <Grid item xs={12} sx={{margin: '0 auto'}}>
                         {children}
                     </Grid>
