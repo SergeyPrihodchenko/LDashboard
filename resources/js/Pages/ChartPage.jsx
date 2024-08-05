@@ -16,7 +16,7 @@ const preparationOfPoints = (obj) => {
     return arr
 }
 
-export default function ChartPage({chartPhone, chartMail, entryPoints, generalData, title}) {
+export default function ChartPage({chartPhone, chartMail, entryPoints, generalData, dateUpdateDirect, title}) {
 
     const reset = () => {
         chart.data.labels = preparationOfPoints(entryPoints).map(point => point)
@@ -191,7 +191,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
     }, [])
 
     return (
-        <Guest>
+        <Guest dateUpdateDirect={dateUpdateDirect}>
             <ControlPanelComponent title={title}/>
             <hr />
             <Grid item xs={8}>

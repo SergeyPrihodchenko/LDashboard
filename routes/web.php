@@ -19,3 +19,5 @@ require __DIR__.'/chart.php';
 require __DIR__.'/mails.php';
 require __DIR__.'/auth.php';
 require __DIR__.'/compaigns.php';
+require __DIR__.'/direct.php';
+

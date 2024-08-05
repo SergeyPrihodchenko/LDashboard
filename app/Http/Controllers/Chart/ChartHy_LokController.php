@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Chart;
 
-use App\Models\DirectSwagelo;
+use App\Models\Direct;
 use App\Models\Hy_LokInvoice;
 use App\Models\Hy_LokPhone;
 use App\Models\SateliPhone;
@@ -17,7 +17,9 @@ class ChartHy_LokController extends ChartController
             new Hy_LokInvoice(),
             new Hy_LokPhone(),
             new SateliPhone(),
-            new DirectSwagelo()
+            new Direct(),
+            env('AUTH_TOKEN_METRIC_SWAGELO_HY_LOK'),
+            env('COUNTER_ID_METRIC_HY_LOK')
         );
     }
 }

@@ -3,15 +3,20 @@
 namespace App\Http\Controllers\Chart;
 
 use App\Http\Controllers\Controller;
+use App\Models\UpdateDirect;
+use App\Services\APIHook\Yandex;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 abstract class ChartController extends Controller
 {
+    protected UpdateDirect $updateDirect;
+    protected int $directID;
     protected Model $modelInvoice;
     protected Model $modelPhone;
     protected Model $sateliPhone;
+    protected Yandex $yandex;
     protected $direct;
     protected $title;
 
@@ -19,17 +24,23 @@ abstract class ChartController extends Controller
         $modelInvoice,
         $modelPhone,
         $sateliPhone,
-        $direct
+        $direct,
+        $metricaToken,
+        $metricaCounter,
     )
     {
         $this->modelInvoice = $modelInvoice;
         $this->modelPhone = $modelPhone;
         $this->sateliPhone = $sateliPhone;
         $this->direct = $direct;
+        $this->yandex = new Yandex($metricaToken, $metricaCounter);
+        $this->updateDirect = new UpdateDirect();
     }
 
     public function index()
     {
+        $dateUpdateDirect = $this->updateDirect::select(['date_check_update'])->limit(1)->get()->toArray()[0]['date_check_update'];
+
         $dataWikaInvoice = $this->modelInvoice::select('invoice_date', 'invoice_status', 'client_mail_id', 'invoice_price')->distinct()->get();
 
         $sateliPhone = $this->sateliPhone::select('client_phone', 'invoice_status', 'invoice_price', 'invoice_date')->get();
@@ -132,7 +143,8 @@ abstract class ChartController extends Controller
                 'countCalls' => $countPhone,
                 'sumPriceForCalls' => number_format($sumPriceForCalls, 2, '.', ''),
                 'sumPriceForMails' => number_format($sumPriceForMails, 2, '.', ''),
-            ]
+            ],
+            'dateUpdateDirect' => $dateUpdateDirect
         ]);
     }
 
@@ -244,28 +256,45 @@ abstract class ChartController extends Controller
                 'countMails' => $countMail,
                 'countCalls' => $countPhone,
                 'sumPriceForCalls' => number_format($sumPriceForCalls, 2, '.', ''),
-                'sumPriceForMails' => number_format($sumPriceForMails, 2, '.', '')
+                'sumPriceForMails' => number_format($sumPriceForMails, 2, '.', ''),
             ];
     }
 
     public function fetchDirect()
     {
-        $data = $this->direct::all(['Cost', 'Clicks', 'Date'])->toArray();
-        $fromDate = date('Y-m-d', strtotime($data[0]['Date']));
-        $toDate = date('Y-m-d', strtotime($data[count($data) - 1]['Date']));
-        $sumPrice = 0;
-        $countCliks = 0;
+        $compaignsId = $this->parserForMetricByCompaign($this->yandex->metricIdCompaign()['data']);
 
-        foreach ($data as $key => $value) {
-            $sumPrice += (float)$value['Cost'];
-            $countCliks += (int) $value['Clicks'];
-        }
+        $fromDate = date('Y-m-d', strtotime($this->direct::select(['Date'])->whereIn('CampaignId', $compaignsId)->limit(1)->get()->toArray()[0]['Date']));
+        $toDate = date('Y-m-d', strtotime($this->direct::select(['Date'])->whereIn('CampaignId', $compaignsId)->orderByRaw('Date DESC')->limit(1)->get()->toArray()[0]['Date']));
+        $sumPrice = $this->direct::whereIn('CampaignId', $compaignsId)->sum('Cost');
+        $countCliks = $this->direct::whereIn('CampaignId', $compaignsId)->sum('Clicks');
 
         return [
             'fromDate' => $fromDate,
             'toDate' => $toDate,
-            'sumPrice' => number_format($sumPrice, 2, '.', ','),
+            'sumPrice' => number_format($sumPrice, 2, '.', ''),
             'countCliks' => $countCliks
             ];
+    }
+
+    private function parserForMetricByCompaign(array $metrics): array
+    {
+        $data = [];
+
+        foreach ($metrics as $value) {
+            $compaignId = $value['dimensions'][0]['name'];
+            if(!preg_match('/^[0-9]+$/', $compaignId)) {
+                $expoldeCompaignId = explode('_', $compaignId);
+                $compaignId = $expoldeCompaignId[count($expoldeCompaignId) - 1];
+            }
+
+            if(!preg_match('/^[0-9]+$/', $compaignId)) {
+                continue;
+            }
+
+            $data[] = $compaignId;
+        }
+
+        return $data;
     }
 }

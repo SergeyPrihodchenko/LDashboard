@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Chart;
 
-use App\Models\DirectWika;
+use App\Models\Direct;
 use App\Models\HylokInvoice;
 use App\Models\HylokPhone;
 use App\Models\SateliPhone;
@@ -18,7 +18,9 @@ class ChartHylokController extends ChartController
             new HylokInvoice(),
             new HylokPhone(),
             new SateliPhone(),
-            new DirectWika()
+            new Direct(),
+            env('AUTH_TOKEN_METRIC_HYLOK'),
+            env('COUNTER_ID_METRIC_HYLOK')
         );
     }
 }

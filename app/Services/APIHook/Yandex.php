@@ -336,6 +336,45 @@ final class Yandex {
         return $data;
     }
 
+    private function fetchMetricIdCompaign($counter = 1)
+    {
+        $client = new \GuzzleHttp\Client(['base_uri' => Yandex::YANDEX_METRIC_URL]);
+        $result = $client->request('GET', 'stat/v1/data', [
+            'headers' => [
+                'Authorization' => $this->token,
+                'Content-Type' => 'application/x-yametrika+json'
+            ],
+            'query' => [
+                'ids' => $this->counter_id,
+                'metrics' => 'ym:s:visits',
+                'date1' => '2023-04-01',
+                'date2' => $this->dateTo,
+                'dimensions' => 'ym:s:<attribution>UTMCampaign',
+                'limit' => 10000
+            ]
+        ]);
+
+        if($counter == 3) {
+            file_put_contents(__DIR__ . '/api_logs.txt', 'Ошибка при запросе к яндекс метрике' . "\n", FILE_APPEND);
+            exit();
+        }
+
+        $status = $result->getStatusCode();
+
+        if($status != '200') {
+
+            $counter = $counter + 1;
+            sleep(1);
+
+            $this->fetchMetricCompaign($counter);
+
+        }
+
+        $data = $result->getBody();
+
+        return $data;
+    }
+
     public function metricById($id): array
     {
        $data = $this->fetchMetric($id);
@@ -348,6 +387,15 @@ final class Yandex {
     public function metricCompaign(): array
     {
        $data = $this->fetchMetricCompaign();
+
+       $data = json_decode($data, true);
+
+       return $data;
+    }
+
+    public function metricIdCompaign(): array
+    {
+       $data = $this->fetchMetricIdCompaign();
 
        $data = json_decode($data, true);
 

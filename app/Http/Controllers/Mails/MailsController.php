@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mails;
 
 use App\Http\Controllers\Controller;
+use App\Models\UpdateDirect;
 use App\Services\APIHook\Yandex;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -10,7 +11,7 @@ use Inertia\Inertia;
 
 abstract class MailsController extends Controller
 {
-
+    protected UpdateDirect $updateDirect;
     protected Model $model;
     protected Model $modelVisits;
     protected Yandex $yandex;
@@ -29,13 +30,16 @@ abstract class MailsController extends Controller
         $this->modelVisits = $modelVisits;
         $this->yandex = new Yandex($metricToken, $metricCounter);
         $this->direct = $direct;
+        $this->updateDirect = new UpdateDirect();
     }
 
     public function index()
     {
+        $dateUpdateDirect = $this->updateDirect::select(['date_check_update'])->limit(1)->get()->toArray()[0]['date_check_update'];
+
         $data = $this->model::select('client_mail', 'invoice_status', 'invoice_price')->distinct()->get();
 
-        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => $this->title]]);
+        return Inertia::render('MailsPage', ['data' => ['rows' => $data, 'title' => $this->title, 'dateUpdateDirect' => $dateUpdateDirect]]);
     }
 
     public function general(Request $request)

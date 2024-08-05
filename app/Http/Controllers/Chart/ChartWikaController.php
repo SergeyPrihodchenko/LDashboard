@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Chart;
 
+use App\Models\Direct;
 use App\Models\DirectWika;
 use App\Models\SateliPhone;
 use App\Models\WikaInvoice;
@@ -17,7 +18,9 @@ class ChartWikaController extends ChartController
             new WikaInvoice(),
             new WikaPhone(),
             new SateliPhone(),
-            new DirectWika()
+            new Direct(),
+            env('AUTH_TOKEN_METRIC_WIKA'),
+            env('COUNTER_ID_METRIC_WIKA')
         );
     }
 }

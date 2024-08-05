@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Compaigns;
 
 use App\Http\Controllers\Controller;
+use App\Models\UpdateDirect;
 use App\Services\APIHook\Yandex;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 abstract class CompaignsController extends Controller
 {
-
+    protected UpdateDirect $updateDirect;
     protected $direct;
     protected $yandex;
     protected $title;
@@ -28,14 +29,18 @@ abstract class CompaignsController extends Controller
         $this->yandex = new Yandex($metricaToken, $metricaCounter);
         $this->modelVisitor = $modelVisitor;
         $this->modelInvoice = $modelInvoice;
-        
+        $this->updateDirect = new UpdateDirect();
+
     }
 
     public function index()
     {
+        $dateUpdateDirect = $this->updateDirect::select(['date_check_update'])->limit(1)->get()->toArray()[0]['date_check_update'];
+
         $direct = $this->direct::all('CampaignId', 'CampaignName', 'AdGroupId', 'AdGroupName', 'Clicks', 'Cost', 'Date');
 
         $data = [];
+        $data['dateUpdateDirect'] = $dateUpdateDirect;
         $data['direct'] = [];
 
         foreach ($direct as $key => $value) {
@@ -54,6 +59,7 @@ abstract class CompaignsController extends Controller
                 }
                 $data['direct'][$value['CampaignId']]['cost'] += (float)$value['Cost'];
             }
+            unset($direct[$key]);
         }
 
         foreach ($data['direct'] as $key => $value) {

@@ -6,7 +6,7 @@ import { Container } from "@mui/material";
 const MailsPage = ({data}) => {
 console.log(data);
     return (
-        <Guest>
+        <Guest dateUpdateDirect={data.dateUpdateDirect}>
             <ControlPanelComponent title={data.title}/>
             <Container maxWidth={'1600px'}>
                 <TableComponent data={data}/>

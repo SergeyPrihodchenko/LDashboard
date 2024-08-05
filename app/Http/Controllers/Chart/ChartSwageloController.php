@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Chart;
 
-use App\Models\DirectSwagelo;
+use App\Models\Direct;
 use App\Models\SateliPhone;
 use App\Models\SwageloInvoice;
 use App\Models\SwageloPhone;
@@ -18,7 +18,9 @@ class ChartSwageloController extends ChartController
             new SwageloInvoice(),
             new SwageloPhone(),
             new SateliPhone(),
-            new DirectSwagelo()
+            new Direct(),
+            env('AUTH_TOKEN_METRIC_SWAGELO_HY_LOK'),
+            env('COUNTER_ID_METRIC_HY_LOK')
         );
     }
 }

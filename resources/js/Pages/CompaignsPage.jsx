@@ -114,7 +114,7 @@ const Compaigns = ({data}) => {
     }, [])
 
     return (
-        <Guest>
+        <Guest dateUpdateDirect={data.dateUpdateDirect}>
             <ControlPanelComponent title={data.routePath}/>
             <hr />
             <br/>

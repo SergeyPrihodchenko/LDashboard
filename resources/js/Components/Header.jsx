@@ -1,19 +1,49 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { Button, ButtonGroup } from '@mui/material';
+import { Button, ButtonGroup, Typography } from '@mui/material';
 import { Link } from '@inertiajs/react';
+import {PublishedWithChanges, Sync} from '@mui/icons-material';
+import axios from 'axios';
 
+const checkUpdate = (date) => {
+  const dateUpdate = new Date(date)
+  const dateTo = new Date()
 
-export default function Header() {
+  if(dateUpdate.toDateString == dateTo.toDateString) {
+    return true
+  } else {
+    return false
+  }
+}
+
+const updateDirect = () => {
+  axios.post(route('update.direct'))
+  .then(res => {
+    console.log(res);
+  })
+  .catch(err => {
+    console.log(err);
+  })
+}
+
+export default function Header({dateUpdateDirect}) {
   const [value, setValue] = React.useState(0);
 
   return (
-    <Box sx={{ width: '100%', height: 100, display: 'flex', alignItems: 'center', borderBottom: 'solid 1px'}}>
+    <Box sx={{padding: '0 10px', width: '100%', height: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: 'solid 1px'}}>
         <ButtonGroup variant='contained'>
             <Link href={route('chart.wika')}><Button >Отчеты</Button></Link>
             <Link href={route('compaigns.wika')}><Button>Аналитика рекламы</Button></Link>
             <Link href={route('wika')}><Button>Список клиентов</Button></Link>
         </ButtonGroup>
+        <Box sx={{display: 'flex', gap: 1}}>
+          <Typography variant="h6" gutterBottom color={'white'} maxWidth={'290px'}>Дата последнего обновления: {dateUpdateDirect}</Typography>
+          <Button disabled={checkUpdate(dateUpdateDirect)} variant='contained' color='success' onClick={updateDirect}>
+          {
+            checkUpdate(dateUpdateDirect) ? <PublishedWithChanges/> : <Sync/>
+          }
+          </Button>
+        </Box>
     </Box>
   );
 }
