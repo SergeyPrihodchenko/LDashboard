@@ -8,26 +8,31 @@ import axios from 'axios';
 const checkUpdate = (date) => {
   const dateUpdate = new Date(date)
   const dateTo = new Date()
-
-  if(dateUpdate.toDateString == dateTo.toDateString) {
+  
+  if(dateUpdate.toDateString() == dateTo.toDateString()) {
     return true
   } else {
     return false
   }
 }
 
-const updateDirect = () => {
-  axios.post(route('update.direct'))
-  .then(res => {
-    console.log(res);
-  })
-  .catch(err => {
-    console.log(err);
-  })
-}
+
 
 export default function Header({dateUpdateDirect}) {
-  const [value, setValue] = React.useState(0);
+  const [updated, setUpdated] = React.useState(checkUpdate(dateUpdateDirect));
+
+  const updateDirect = () => {
+    axios.post(route('update.direct'))
+    .then(res => {
+      console.log(res);
+      setUpdated(true)
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  }
+
+console.log(updated);
 
   return (
     <Box sx={{padding: '0 10px', width: '100%', height: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: 'solid 1px'}}>
@@ -38,9 +43,9 @@ export default function Header({dateUpdateDirect}) {
         </ButtonGroup>
         <Box sx={{display: 'flex', gap: 1}}>
           <Typography variant="h6" gutterBottom color={'white'} maxWidth={'290px'}>Дата последнего обновления: {dateUpdateDirect}</Typography>
-          <Button disabled={checkUpdate(dateUpdateDirect)} variant='contained' color='success' onClick={updateDirect}>
+          <Button disabled={updated} variant='contained' color='success' onClick={updateDirect}>
           {
-            checkUpdate(dateUpdateDirect) ? <PublishedWithChanges/> : <Sync/>
+            updated ? <PublishedWithChanges sx={{'&, svg': {fontSize: '40px'}}}/> : <Sync sx={{'&, svg': {fontSize: '40px'}}}/>
           }
           </Button>
         </Box>

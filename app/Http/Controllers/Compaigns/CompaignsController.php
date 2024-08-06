@@ -37,65 +37,83 @@ abstract class CompaignsController extends Controller
     {
         $dateUpdateDirect = $this->updateDirect::select(['date_check_update'])->limit(1)->get()->toArray()[0]['date_check_update'];
 
-        $direct = $this->direct::all('CampaignId', 'CampaignName', 'AdGroupId', 'AdGroupName', 'Clicks', 'Cost', 'Date');
-
-        $data = [];
         $data['dateUpdateDirect'] = $dateUpdateDirect;
-        $data['direct'] = [];
-
-        foreach ($direct as $key => $value) {
-            if(!array_key_exists($value['CampaignId'], $data['direct'])) {
-                $data['direct'][$value['CampaignId']] = [
-                    'campaignName' => $value['CampaignName'],
-                    'AdGroupId' => [$value['AdGroupId'] => ['name' => $value['CampaignName'], 'cost' => (float)$value['cost']]],
-                    'cost' => (float)$value['Cost']
-                ];
-            } else {
-                if(!array_key_exists($value['AdGroupId'], $data['direct'][$value['CampaignId']]['AdGroupId']))
-                {
-                    $data['direct'][$value['CampaignId']]['AdGroupId'][$value['AdGroupId']] = ['name' => $value['AdGroupName'], 'cost' => (float)$value['Cost']];
-                } else {
-                    $data['direct'][$value['CampaignId']]['AdGroupId'][$value['AdGroupId']]['cost'] += (float)$value['Cost'];
-                }
-                $data['direct'][$value['CampaignId']]['cost'] += (float)$value['Cost'];
-            }
-            unset($direct[$key]);
-        }
-
-        foreach ($data['direct'] as $key => $value) {
-            $data['direct'][$key]['cost'] = number_format($value['cost'], 2, '.', '');
-            foreach ($value['AdGroupId'] as $i => $el) {
-                $data['direct'][$key]['AdGroupId'][$i]['cost'] = number_format($el['cost'], 2, '.', '');
-            }
-        }
 
         $data['routePath'] = $this->title;
 
         return Inertia::render('CompaignsPage', ['data' => $data]);
+
     }
 
-    public function invoiceClientByDirect(): array
+    public function dataByCompaigns()
     {
-        $data = [];
-
         $metrics = $this->yandex->metricCompaign();
 
-        $metricsByCompany = $this->parserForMetricByCompaign($metrics['data']);
-        $metricsByGroup = $this->parserForMetricByGroup($metrics['data']);
+        $dataOfMetrics = $this->prepareDataOfMetric($metrics['data']);
 
-        $sortClientsByCompaign = $this->findClientForCompaign($metricsByCompany);
-        $sortClientsByGroup = $this->findClientForGroup($metricsByGroup);
+        unset($metrics);
 
-        $clientsDataByCompaign = $this->findClientsInInvoice($sortClientsByCompaign);
-        $clientsDataByGroup = $this->findClientsInInvoice($sortClientsByGroup);
+        $compaignsID = [];
+        foreach ($dataOfMetrics as $key => $value) {
+            $compaignsID[] = $key;
+        }
 
-        $data['clientsByGroup'] = $clientsDataByGroup;
-        $data['clientsByCompaign'] = $clientsDataByCompaign;
+        $directData = $this->getDirectDataByCompaignsId($compaignsID);
+
+        $data = $this->prepareDataOfDirect($directData);
+
+        unset($directData);
+
+        return ['metric' => $dataOfMetrics,'direct' => $data];
+    }
+
+    private function getDirectDataByCompaignsId($ids)
+    {
+        $data = $this->direct::select('CampaignId', 'CampaignName', 'AdGroupId', 'AdGroupName', 'Clicks', 'Cost', 'Date')
+        ->whereIn('CampaignId', $ids)
+        ->get()
+        ->toArray();
 
         return $data;
     }
 
-    private function parserForMetricByCompaign(array $metrics): array
+    private function prepareDataOfDirect($direct)
+    {
+        $data = [];
+        foreach ($direct as $value) {
+            if(!array_key_exists($value['CampaignId'],$data)) {
+                $data[$value['CampaignId']] = [
+                    'compaignName' => $value['CampaignName'],
+                    'groups' => [
+                        $value['AdGroupId'] => [
+                            'clicks' => (int)$value['Clicks'],
+                            'cost' => (float)$value['Cost']
+                        ]
+                    ],
+                    'clicks' => (int)$value['Clicks'],
+                    'cost' => (float)$value['Cost']
+                ];
+            } else {
+                $data[$value['CampaignId']]['clicks'] += (int)$value['Clicks'];
+                $data[$value['CampaignId']]['cost'] += (float)$value['Cost'];
+
+                if(!array_key_exists($value['AdGroupId'],$data[$value['CampaignId']]['groups'])) {
+                    $data[$value['CampaignId']]['groups'][$value['AdGroupId']] = [
+                        'clicks' => (int)$value['Clicks'],
+                        'cost' => (float)$value['Cost']
+                    ];
+                } else {
+                    $data[$value['CampaignId']]['groups'][$value['AdGroupId']]['clicks'] += (int)$value['Clicks'];
+                    $data[$value['CampaignId']]['groups'][$value['AdGroupId']]['cost'] += (float)$value['Cost'];
+                }
+            }
+
+        }
+        return $data;
+    }
+
+
+    private function prepareDataOfMetric($metrics)
     {
         $data = [];
 
@@ -105,27 +123,12 @@ abstract class CompaignsController extends Controller
                 $expoldeCompaignId = explode('_', $compaignId);
                 $compaignId = $expoldeCompaignId[count($expoldeCompaignId) - 1];
             }
-
-            $data[$compaignId][] = [
-                'compaignGroupId' => $this->prepare($value['dimensions'][1]['name']),
-                'clientId' => $value['dimensions'][2]['name'],
-                'date' => $value['dimensions'][3]['name'],
-                'clicks' => $value['metrics'][0]
-            ];
-        }
-
-        return $data;
-    }
-
-    private function parserForMetricByGroup(array $metrics): array
-    {
-        $data = [];
-
-        foreach ($metrics as $value) {
-            $data[$this->prepare($value['dimensions'][1]['name'])][] = [
-                'clientId' => $value['dimensions'][2]['name'],
-                'date' => $value['dimensions'][3]['name'],
-                'clicks' => $value['metrics'][0]
+            if(!preg_match('/^[0-9]+$/', $compaignId)) {
+                continue;
+            }
+            $data[$compaignId][$this->prepare($value['dimensions'][1]['name'])][] = [
+                'clientId' => $value['dimensions'][1]['name'],
+                'date' => $value['dimensions'][2]['name']
             ];
         }
 
@@ -141,47 +144,6 @@ abstract class CompaignsController extends Controller
         $id = explode(':', $filthyId)[1];
 
         return $id;
-    }
-
-    private function findClientForCompaign(array $metrics): array
-    {
-        $data = [];
-        foreach ($metrics as $compaignId => $metric) {
-            foreach ($metric as $key => $value) {
-                $data[$compaignId][] = $value['clientId'];
-            }
-            $data[$compaignId] = array_unique($data[$compaignId]);
-        }
-
-        return $data;
-    }
-
-    private function findClientForGroup(array $metrics): array
-    {
-        $data = [];
-        foreach ($metrics as $groupId => $metric) {
-            foreach ($metric as $key => $value) {
-                $data[$groupId][] = $value['clientId'];
-            }
-            $data[$groupId] = array_unique($data[$groupId]);
-        }
-
-        return $data;
-    }
-
-    private function findClientsInInvoice(array $metricClients): array
-    {
-        $clientsVisitor = [];
-        foreach ($metricClients as $compaignId => $clients) {
-            $clientsVisitor[$compaignId] = $this->modelVisitor::whereIn('_ym_uid', $clients)->distinct()->get('client_id');
-        }
-
-        $clientsInVisitor = [];
-        foreach ($clientsVisitor as $compaignId => $clientsIds) {
-            $clientsInVisitor[$compaignId] = $this->modelInvoice::where('invoice_status', 2)->whereIn('client_id', $clientsIds)->distinct()->get();
-        }
-
-        return $clientsInVisitor;
     }
 
 }

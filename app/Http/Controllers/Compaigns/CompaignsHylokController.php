@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Compaigns;
 
-use App\Models\DirectHylok;
+use App\Models\Direct;
 use App\Models\HylokInvoice;
 use App\Models\HylokVisitor;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class CompaignsHylokController extends CompaignsController
     public function __construct()
     {
         parent::__construct(
-            new DirectHylok(),
+            new Direct(),
             env('AUTH_TOKEN_METRIC_HYLOK'),
             env('COUNTER_ID_METRIC_HYLOK'),
             new HylokVisitor,
