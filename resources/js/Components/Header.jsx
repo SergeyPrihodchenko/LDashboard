@@ -18,13 +18,13 @@ const checkUpdate = (date) => {
 
 
 
-export default function Header({dateUpdateDirect}) {
+export default function Header({dateUpdateDirect, updateDirectDate}) {
   const [updated, setUpdated] = React.useState(checkUpdate(dateUpdateDirect));
 
   const updateDirect = () => {
     axios.post(route('update.direct'))
     .then(res => {
-      console.log(res);
+      updateDirectDate(res.data.date)
       setUpdated(true)
     })
     .catch(err => {

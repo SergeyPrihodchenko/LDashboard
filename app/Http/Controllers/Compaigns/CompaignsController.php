@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UpdateDirect;
 use App\Services\APIHook\Yandex;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 abstract class CompaignsController extends Controller
@@ -64,7 +65,44 @@ abstract class CompaignsController extends Controller
 
         unset($directData);
 
-        return ['metric' => $dataOfMetrics,'direct' => $data];
+        $invoices = $this->modelInvoice::select(['client_id', 'invoice_price', 'client_mail'])->where('invoice_status', 2)->distinct()->get()->toArray();
+
+        $invoicesId = [];
+        foreach ($invoices as $value) {
+            $invoicesId[] = $value['client_id'];
+        }
+
+        
+
+        try {
+
+            $invoiceByMetric = $this->modelVisitor::select(['_ym_uid', 'client_id'])->whereIn('client_id', $invoicesId)->get()->toArray();
+
+        } catch (\PDOException $e) {
+            Log::error($e->getMessage());
+
+            $invoiceByMetric = [];
+        }
+
+        $invoiceList = $this->findClientInInvocie($dataOfMetrics, $invoiceByMetric);
+        
+
+        return ['direct' => $data, 'metric' => $dataOfMetrics, 'invoice' => $invoiceList];
+    }
+
+    private function findClientInInvocie($metric, $invoiceClients)
+    {
+        $data = [];
+        foreach ($invoiceClients as $ymUid) {
+            foreach ($metric as $compaign => $groups) {
+                foreach ($groups as $key => $value) {
+                    if(in_array($ymUid['_ym_uid'], $groups[$key])) {
+                        $data[$compaign][] = [$ymUid['client_id'] => $ymUid['_ym_uid']]; 
+                    }
+                }
+            }
+        }
+        return $data;
     }
 
     private function getDirectDataByCompaignsId($ids)
@@ -86,6 +124,7 @@ abstract class CompaignsController extends Controller
                     'compaignName' => $value['CampaignName'],
                     'groups' => [
                         $value['AdGroupId'] => [
+                            'adGroupName' => $value['AdGroupName'],
                             'clicks' => (int)$value['Clicks'],
                             'cost' => (float)$value['Cost']
                         ]
@@ -99,6 +138,7 @@ abstract class CompaignsController extends Controller
 
                 if(!array_key_exists($value['AdGroupId'],$data[$value['CampaignId']]['groups'])) {
                     $data[$value['CampaignId']]['groups'][$value['AdGroupId']] = [
+                        'adGroupName' => $value['AdGroupName'],
                         'clicks' => (int)$value['Clicks'],
                         'cost' => (float)$value['Cost']
                     ];
@@ -126,10 +166,7 @@ abstract class CompaignsController extends Controller
             if(!preg_match('/^[0-9]+$/', $compaignId)) {
                 continue;
             }
-            $data[$compaignId][$this->prepare($value['dimensions'][1]['name'])][] = [
-                'clientId' => $value['dimensions'][1]['name'],
-                'date' => $value['dimensions'][2]['name']
-            ];
+            $data[$compaignId][$this->prepare($value['dimensions'][1]['name'])][] = $value['dimensions'][2]['name'];
         }
 
         return $data;

@@ -79,8 +79,7 @@ abstract class MailsController extends Controller
         $directs = [];
 
         foreach ($dataMetric['data'] as $key => $value) {
-
-            if($cmId = $this->serchCmId($dataMetric['data'][0]['dimensions'][2]['name'])) {
+            if($cmId = $this->serchCmId($value['dimensions'][2]['name'])) {
                 if(!array_key_exists(date("Y-m-d", strtotime($value['dimensions'][1]['name'])), $directs)) {
                     $metricParams['cmId'] = $cmId;
                     $metricParams['date'] = $value['dimensions'][1]['name'];

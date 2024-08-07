@@ -116,6 +116,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
     const [dateError, setDateError] = useState(false)
     const [chart, setChart] = useState('')
     const [titleSite, setTitleSite] = useState(title)
+    const [dateUpdate, setDateUpdate] = useState(dateUpdateDirect)
 
     const fetchDirect = () => {
 
@@ -183,6 +184,10 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
        setChart(newChart)
 
     });
+
+    const updateDirectDate = (date) => {
+        setDateUpdate(date)
+    }
             
 
     useEffect(() => {
@@ -191,7 +196,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
     }, [])
 
     return (
-        <Guest dateUpdateDirect={dateUpdateDirect}>
+        <Guest dateUpdateDirect={dateUpdate} updateDirectDate={updateDirectDate}>
             <ControlPanelComponent title={title}/>
             <hr />
             <Grid item xs={8}>

@@ -27,6 +27,7 @@ const Compaigns = ({data}) => {
     const chartRef = createRef(null);
     const [routePath, ] = useState(data.routePath);
     const [loader, setLoader] = useState(false);
+    const [dateUpdate, setDateUpdate] = useState(data.dateUpdateDirect)
 
     const fetchInvoice = () => {
 
@@ -86,13 +87,17 @@ const Compaigns = ({data}) => {
 
     });
 
+    const updateDirectDate = (date) => {
+        setDateUpdate(date)
+    }
+
     useEffect(() => {
         load(compaigns)
         fetchInvoice()
     }, [])
 
     return (
-        <Guest dateUpdateDirect={data.dateUpdateDirect}>
+        <Guest dateUpdateDirect={dateUpdate} updateDirectDate={updateDirectDate}>
             <ControlPanelComponent title={data.routePath}/>
             <hr />
             <br/>

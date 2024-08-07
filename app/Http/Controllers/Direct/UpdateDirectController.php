@@ -57,6 +57,8 @@ class UpdateDirectController extends Controller
                 }
             }
         }
+
+        return ['date' => UpdateDirect::select(['date_check_update'])->limit(1)->get()->toArray()[0]['date_check_update']];
     }
 
     private function updateDirect($value, $clientLogin, $authToken, $title)
