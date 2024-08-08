@@ -1,33 +1,35 @@
 import ControlPanelComponent from '@/Components/Compaigns/ControlPanelComponent';
+import TableComponent from '@/Components/MUIComponents/Compaigns/TableComponent';
 import Guest from '@/Layouts/GuestLayout';
-import { Box, CircularProgress, Grid } from '@mui/material';
+import { CircularProgress, Grid } from '@mui/material';
 import axios from 'axios';
-import Chart from 'chart.js/auto'
-import { createRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const preparation = (compaignData) => {
-    const compaigns = {
-        points: [],
-        values: []
-    }
-
+    
+    let rows = []
+    
     for(let key in compaignData) {
-        compaigns.points.push(compaignData[key].campaignName)
-        compaigns.values.push(compaignData[key].cost)
+  
+      rows.push({
+        title: compaignData[key].compaignName,
+        clients: 0,
+        clicks: compaignData[key].clicks,
+        cost: compaignData[key].cost.toFixed(2),
+        profit: 0
+      })
     }
-
-    return compaigns
+  
+    return rows
 }
 
 const Compaigns = ({data}) => {
-
-    console.log(data);
-
-    const [compaigns, setCompaigns] = useState(preparation(data.direct));
-    const chartRef = createRef(null);
+    
+    const [compaigns, setCompaigns] = useState([]);
     const [routePath, ] = useState(data.routePath);
     const [loader, setLoader] = useState(false);
-
+    console.log(compaigns);
+    
     const fetchInvoice = () => {
 
         let routing = 'compaigns.wika.invoice'
@@ -55,8 +57,8 @@ const Compaigns = ({data}) => {
 
         axios.post(route(routing))
         .then(result => {
-            console.log(result.data);
-            setClients(result.data)
+            
+            setCompaigns(preparation(result.data.direct))            
             setLoader(true)
         })
         .catch(err => {
@@ -64,30 +66,7 @@ const Compaigns = ({data}) => {
         })
     }
 
-    const load = (async function(dataCompaign) {
-
-        const newChart = new Chart(
-            chartRef.current,
-           {
-               type: 'doughnut',
-               data: {
-               labels: dataCompaign.points,
-               datasets: [
-                   {
-                   label: 'Затраты по компании',
-                   data: dataCompaign.values
-                   }
-               ],
-               }
-           }
-       )
-
-       setChart(newChart)
-
-    });
-
     useEffect(() => {
-        load(compaigns)
         fetchInvoice()
     }, [])
 
@@ -97,10 +76,7 @@ const Compaigns = ({data}) => {
             <hr />
             <br/>
             <Grid container>
-                <Grid item xs={7}>
-                 
-                </Grid>
-                <Grid item xs={5}><canvas style={{width: '600px', height: '300px', margin: '0 auto'}} onLoad={load} ref={chartRef} id="acquisitions"></canvas></Grid>
+                <TableComponent rows={compaigns}/>
             </Grid>
         </Guest>
     )
