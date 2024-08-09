@@ -2,7 +2,7 @@ import { createRef, useEffect, useState } from 'react';
 import { RestartAlt } from '@mui/icons-material';
 import Chart from 'chart.js/auto'
 import Guest from '@/Layouts/GuestLayout';
-import CalendarComponent from '@/Components/MUIComponents/Mails/CalendarComponent';
+import CalendarComponent from '@/Components/MUIComponents/Chart/CalendarComponent';
 import ControlPanelComponent from '@/Components/Chart/ControlPanelComponent';
 import axios from 'axios';
 import { Alert, Box, Button, Container, Grid, Skeleton, Typography } from '@mui/material';
