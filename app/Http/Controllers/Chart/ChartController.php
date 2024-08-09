@@ -277,6 +277,18 @@ abstract class ChartController extends Controller
             ];
     }
 
+    public function getCastomMetric()
+    {
+        $compaignsId = $this->parserForMetricByCompaign($this->yandex->metricIdCompaign()['data']);
+
+        $fromDate = date('Y-m-d', strtotime($this->direct::select(['Date'])->whereIn('CampaignId', $compaignsId)->limit(1)->get()->toArray()[0]['Date']));
+        $toDate = date('Y-m-d', strtotime($this->direct::select(['Date'])->whereIn('CampaignId', $compaignsId)->orderByRaw('Date DESC')->limit(1)->get()->toArray()[0]['Date']));
+
+        $metricData = $this->yandex->metricVisits($fromDate, $toDate);
+
+        return $metricData['data'];
+    }
+
     private function parserForMetricByCompaign(array $metrics): array
     {
         $data = [];

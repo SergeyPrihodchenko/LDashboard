@@ -297,6 +297,8 @@ final class Yandex {
 
         return $data;
     }
+
+
     private function fetchMetricCompaign($counter = 1) 
     {
         $client = new \GuzzleHttp\Client(['base_uri' => Yandex::YANDEX_METRIC_URL]);
@@ -371,6 +373,53 @@ final class Yandex {
         }
 
         $data = $result->getBody();
+
+        return $data;
+    }
+
+    private function fetchMetricVisits($dateFrom, $dateTo, $counter = 1)
+    {
+        $client = new \GuzzleHttp\Client(['base_uri' => Yandex::YANDEX_METRIC_URL]);
+        $result = $client->request('GET', 'stat/v1/data', [
+            'headers' => [
+                'Authorization' => $this->token,
+                'Content-Type' => 'application/x-yametrika+json'
+            ],
+            'query' => [
+                'ids' => $this->counter_id,
+                'metrics' => 'ym:s:visits',
+                'date1' => $dateFrom,
+                'date2' => $dateTo,
+                'limit' => 10000
+            ]
+        ]);
+
+        if($counter == 3) {
+            file_put_contents(__DIR__ . '/api_logs.txt', 'Ошибка при запросе к яндекс метрике' . "\n", FILE_APPEND);
+            exit();
+        }
+
+        $status = $result->getStatusCode();
+
+        if($status != '200') {
+
+            $counter = $counter + 1;
+            sleep(1);
+
+            $this->fetchMetricVisits($dateFrom, $dateTo, $counter);
+
+        }
+
+        $data = $result->getBody();
+
+        return $data;
+    }
+
+    public function metricVisits($dateFrom, $dateTo): array
+    {
+        $data = $this->fetchMetricVisits($dateFrom, $dateTo);
+
+        $data = json_decode($data, true);
 
         return $data;
     }

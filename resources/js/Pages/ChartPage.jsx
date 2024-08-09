@@ -58,7 +58,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
         data.set('dateFrom', dateFrom)
         data.set('dateTo', dateTo)
 
-        let routePath = '';
+        let routePath = switchRoute();
 
         switch (titleSite) {            
             case 'wika':
@@ -75,9 +75,6 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
 
             case 'hy-lok':
                 routePath = 'chart.hy-lok.byDate'
-                break;
-        
-            default:
                 break;
         }
 
@@ -138,10 +135,8 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
             case 'hy-lok':
                 routePath = 'chart.hy-lok.direct'
                 break;
-        
-            default:
-                break;
         }
+
         axios.post(route(routePath))
         .then(async res => {
             setDirect(res.data)
@@ -211,12 +206,13 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                 </Container>
                 <hr style={{marginTop: '15px'}}/>
             </Grid>
-            <div><canvas style={{width: '1400px', height: '500px', margin: '0 auto'}} ref={chartRef} id="acquisitions"></canvas></div>
-            <Grid container sx={{borderTop: 'solid 1px', marginTop: 1.5, padding: 1}}>
+            <Grid container>
+                <Grid item xs={2}>
+                <Grid container height={'100%'}>
                 <Grid item xs={12}>
                     <Box className='present_data_box'>
-                       <Box>
-                        <Typography variant='h3'>Письма</Typography>
+                       <Box borderRight={'solid 1px'} paddingRight={'5px'} maxWidth={'250px'} width={'100%'}>
+                        <Typography variant='h6'>Письма</Typography>
                         <Typography>
                                 <span className='titile_header'>общее количество писем: </span>{invoiveData.countMails}
                             </Typography>
@@ -224,8 +220,8 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                                 <span className='titile_header'>сумма оплаченных счетов: </span>{invoiveData.sumPriceForMails}
                             </Typography>
                        </Box>
-                        <Box>
-                            <Typography variant='h3'>Звонки</Typography>
+                        <Box borderRight={'solid 1px'} paddingRight={'5px'} maxWidth={'250px'} width={'100%'}>
+                            <Typography variant='h6'>Звонки</Typography>
                             <Typography>
                                 <span className='titile_header'>общее количество звонков: </span>{invoiveData.countCalls}
                             </Typography>
@@ -233,9 +229,9 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                                 <span className='titile_header'>сумма оплаченных счетов: </span>{invoiveData.sumPriceForCalls}
                             </Typography>
                         </Box>
-                        {!direct ? <Box><Skeleton width={600} height={250}/></Box> : 
-                        <Box>
-                            <Typography variant='h3'>Директ</Typography>
+                        {!direct ? <Box><Skeleton width={250} height={135}/></Box> : 
+                        <Box borderRight={'solid 1px'} paddingRight={'5px'} maxWidth={'250px'} width={'100%'}>
+                            <Typography variant='h6'>Директ</Typography>
                             <Typography>
                                с {direct.fromDate} по {direct.toDate} 
                             </Typography>
@@ -248,6 +244,18 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                         </Box>
                         }
                     </Box>
+                </Grid>
+                </Grid>
+                </Grid>
+                <Grid item xs={10}>
+                    <div>
+                        <canvas style={{width: '1400px', height: '500px', margin: '0 auto'}} ref={chartRef} id="acquisitions"></canvas>
+                    </div>
+                </Grid>
+            </Grid>
+            <Grid container padding={'15px 0'} border={'solid 1px'}>
+                <Grid item xs={12}>
+                        <h1>test</h1>
                 </Grid>
             </Grid>
         </Guest>

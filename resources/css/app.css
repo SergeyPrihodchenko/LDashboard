@@ -1,3 +1,8 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
 .compaigns_card {
   display: flex;
   flex-direction: column;
@@ -19,8 +24,9 @@
 .present_data_box {
   display: flex;
   justify-content: space-around;
-  align-items: center;
-  max-width: 1600px;
+  align-items: start;
+  flex-direction: column;
+  height: 100%;
 }
 
 .card_group {

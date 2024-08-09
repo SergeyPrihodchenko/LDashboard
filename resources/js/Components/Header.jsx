@@ -35,7 +35,7 @@ export default function Header({dateUpdateDirect, updateDirectDate}) {
 console.log(updated);
 
   return (
-    <Box sx={{padding: '0 10px', width: '100%', height: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: 'solid 1px'}}>
+    <Box sx={{ width: '100%', height: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: 'solid 1px'}}>
         <ButtonGroup variant='contained'>
             <Link href={route('chart.wika')}><Button >Отчеты</Button></Link>
             <Link href={route('compaigns.wika')}><Button>Аналитика рекламы</Button></Link>
