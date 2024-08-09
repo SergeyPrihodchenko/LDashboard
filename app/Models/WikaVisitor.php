@@ -9,9 +9,9 @@ class WikaVisitor extends Model
 {
     use HasFactory;
 
-    // protected $table = 'fluidline_wika_visitors_info';
+    protected $table = 'fluidline_wika_visitors_info';
 
-    protected $connection = 'wika';
+    // protected $connection = 'wika';
 
-    protected $table = 'visitors_info';
+    // protected $table = 'visitors_info';
 }

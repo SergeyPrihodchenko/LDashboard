@@ -43,7 +43,6 @@ abstract class CompaignsController extends Controller
         $data['routePath'] = $this->title;
 
         return Inertia::render('CompaignsPage', ['data' => $data]);
-
     }
 
     public function dataByCompaigns()
@@ -65,14 +64,20 @@ abstract class CompaignsController extends Controller
 
         unset($directData);
 
-        $invoices = $this->modelInvoice::select(['client_id', 'invoice_price', 'client_mail'])->where('invoice_status', 2)->distinct()->get()->toArray();
+        try {
+
+            $invoices = $this->modelInvoice::select(['client_id', 'invoice_price', 'client_mail'])->where('invoice_status', 2)->distinct()->get()->toArray();
+
+        } catch (\PDOException $e) {
+            Log::error($e->getMessage());
+
+            $invoices = [];
+        }
 
         $invoicesId = [];
         foreach ($invoices as $value) {
             $invoicesId[] = $value['client_id'];
         }
-
-        
 
         try {
 
