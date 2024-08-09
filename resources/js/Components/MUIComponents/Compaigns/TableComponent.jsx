@@ -43,19 +43,44 @@ const columns = [
   }
 ];
 
-const prepare = (data) => {
-  console.log(data);
+const counterClients = (obj) => {
+  let count = 0
+  for(let key in obj) {    
+    count += obj[key].length
+  }
+
+  return count
+}
+
+const countProfit = (obj) => {
+  let count = 0
   
-  const rows = []
+  for(let key in obj) {    
+    obj[key].forEach(el => {
+      el.forEach(client => {
+        count += Number(client.invoice_price)
+      })
+    });
+  }
 
-  for(let key in data) {
+  return count
+}
 
-    rows.push({
-      title: data[key].compaignName,
-      clients: 0,
-      clicks: data[key].clicks,
-      cost: data[key].cost.toFixed(2),
-    })
+const preparation = (compaignData) => {
+    
+  let rows = []
+  
+  for(let key in compaignData) {
+      
+      rows.push({
+      title: compaignData[key].compaignName,
+      clients: counterClients(compaignData[key].clients),
+      clicks: compaignData[key].clicks,
+      cost: compaignData[key].cost.toFixed(2),
+      profit: countProfit(compaignData[key].clients),
+      id: key
+      })
+
   }
 
   return rows
@@ -71,23 +96,28 @@ const handleChangeRowsPerPage = (event) => {
 };
 
 
-export default function TableComponent({rows}) {
+export default function TableComponent({compaignsData}) {
   
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [open, setOpen] = React.useState(false);
     const [skeleton, setSkeleton] = React.useState(false);
-
-    const fetch = () => {
+    const [rows, setRows] = React.useState([]);
+    const [dataForModal, setDataForModal] = React.useState([]);
+  
+    const openModal = (id) => {
       setOpen(true)
-      setSkeleton(false)
+      setDataForModal(compaignsData[id])
+      setSkeleton(true)
     }
 
     const handleClose = () => {
       setOpen(false)
     };
 
-    console.log(rows);
+    React.useEffect(() => {
+      setRows(preparation(compaignsData))
+    }, [compaignsData])
     
     return (
         <Paper sx={{ width: '100%', margin: '0 auto'}}>
@@ -116,7 +146,7 @@ export default function TableComponent({rows}) {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, key) => {
                     return (
-                      <TableRow hover role="checkbox" tabIndex={-1} key={key} sx={{cursor: 'pointer'}} onClick={() => fetch(row.title)}>
+                      <TableRow hover role="checkbox" tabIndex={-1} key={key} sx={{cursor: 'pointer'}} onClick={() => openModal(row.id)}>
                         {columns.map((column) => {
                           const value = row[column.id];
                           return (
@@ -143,7 +173,7 @@ export default function TableComponent({rows}) {
             onRowsPerPageChange={handleChangeRowsPerPage}
             labelRowsPerPage={'Выводить по :'}
         />
-        <ModalComponent handleClose={handleClose} open={open} skeleton={skeleton}/>
+        <ModalComponent handleClose={handleClose} open={open} skeleton={skeleton} dataForModal={dataForModal}/>
     </Paper>
   );    
 }

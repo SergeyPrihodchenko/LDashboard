@@ -90,9 +90,16 @@ abstract class CompaignsController extends Controller
         }
 
         $invoiceList = $this->findClientInInvocie($dataOfMetrics, $invoiceByMetric);
-        
 
-        return ['direct' => $data, 'metric' => $dataOfMetrics, 'invoice' => $invoiceList];
+        foreach ($data as $key => $value) {
+            $data[$key]['clients'] = [];
+
+            if(isset($invoiceList[$key])) {
+                $data[$key]['clients'] = $invoiceList[$key];
+            }
+        }
+
+        return ['direct' => $data];
     }
 
     private function findClientInInvocie($metric, $invoiceClients)
@@ -102,7 +109,13 @@ abstract class CompaignsController extends Controller
             foreach ($metric as $compaign => $groups) {
                 foreach ($groups as $key => $value) {
                     if(in_array($ymUid['_ym_uid'], $groups[$key])) {
-                        $data[$compaign][] = [$ymUid['client_id'] => $ymUid['_ym_uid']]; 
+                        $data[$compaign][$key][] = $this->modelInvoice::where('client_id', $ymUid['client_id'])
+                        ->where('invoice_status', 2)
+                        ->get([
+                            'client_mail',
+                            'invoice_date',
+                            'invoice_price'
+                        ])->toArray(); 
                     }
                 }
             }

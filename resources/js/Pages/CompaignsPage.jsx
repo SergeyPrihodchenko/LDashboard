@@ -5,31 +5,12 @@ import { CircularProgress, Grid } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-const preparation = (compaignData) => {
-    
-    let rows = []
-    
-    for(let key in compaignData) {
-  
-      rows.push({
-        title: compaignData[key].compaignName,
-        clients: 0,
-        clicks: compaignData[key].clicks,
-        cost: compaignData[key].cost.toFixed(2),
-        profit: 0
-      })
-    }
-  
-    return rows
-}
-
 const Compaigns = ({data}) => {
-    console.log(data);
+    
     
     const [compaigns, setCompaigns] = useState([]);
     const [routePath, ] = useState(data.routePath);
     const [loader, setLoader] = useState(false);
-    console.log(compaigns);
 
     const updateDirectDate = (date) => {
         setDateUpdate(date)
@@ -62,8 +43,9 @@ const Compaigns = ({data}) => {
 
         axios.post(route(routing))
         .then(result => {
+            console.log(result.data);
             
-            setCompaigns(preparation(result.data.direct))            
+            setCompaigns(result.data.direct)       
             setLoader(true)
         })
         .catch(err => {
@@ -81,7 +63,7 @@ const Compaigns = ({data}) => {
             <hr />
             <br/>
             <Grid container>
-                <TableComponent rows={compaigns}/>
+                <TableComponent compaignsData={compaigns}/>
             </Grid>
         </Guest>
     )
