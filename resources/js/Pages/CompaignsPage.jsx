@@ -24,11 +24,16 @@ const preparation = (compaignData) => {
 }
 
 const Compaigns = ({data}) => {
+    console.log(data);
     
     const [compaigns, setCompaigns] = useState([]);
     const [routePath, ] = useState(data.routePath);
     const [loader, setLoader] = useState(false);
     console.log(compaigns);
+
+    const updateDirectDate = (date) => {
+        setDateUpdate(date)
+    }
     
     const fetchInvoice = () => {
 
@@ -71,7 +76,7 @@ const Compaigns = ({data}) => {
     }, [])
 
     return (
-        <Guest dateUpdateDirect={dateUpdate} updateDirectDate={updateDirectDate}>
+        <Guest dateUpdateDirect={data.dateUpdateDirect} updateDirectDate={updateDirectDate}>
             <ControlPanelComponent title={data.routePath}/>
             <hr />
             <br/>
