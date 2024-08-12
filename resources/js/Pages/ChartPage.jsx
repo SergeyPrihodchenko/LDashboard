@@ -82,9 +82,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
         }
 
         axios.post(route(routePath), data)
-        .then(res => {
-            console.log(res.data);
-            
+        .then(res => {            
             setInvoiceData({...invoiveData, 
                 countMails: res.data.countMails,
                 sumPriceForMails: res.data.sumPriceForMails,
@@ -156,7 +154,6 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
 
         axios.post(route(routePath))
         .then(async res => {
-            console.log(res.data);
             
             setCastopMetric({
                 cpl: res.data.cpl,
