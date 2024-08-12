@@ -161,8 +161,8 @@ abstract class ChartController extends Controller
 
         $dataInvoice = $this->modelInvoice::select('invoice_date', 'invoice_status', 'client_mail_id', 'invoice_price')
         ->where([
-            ['invoice_date', '>', "$dateFrom 00:00:00"],
-            ['invoice_date', '<', "$dateTo 23:59:59"]
+            ['invoice_date', '>=', "$dateFrom 00:00:00"],
+            ['invoice_date', '<=', "$dateTo 23:59:59"]
         ])->distinct()->get();
 
         $sateliPhone = $this->sateliPhone::select('client_phone', 'invoice_status', 'invoice_price', 'invoice_date')->get();
@@ -266,22 +266,14 @@ abstract class ChartController extends Controller
 
         $invoicePhones = $this->sateliPhone::whereIn('client_phone', $phones)->distinct()->get('client_phone', 'invoice_status', 'invoice_price');
 
-        $phonesPrice = $this->sateliPhone::whereIn('client_phone', $phones)->distinct()->get('invoice_price')->where('invoice_status', 2)->sum('invoice_price');
-
         $invoicesMail = $this->modelInvoice::select('client_mail', 'invoice_status', 'invoice_price')->where('invoice_date', '>=', $dateFrom, 'AND', 'invoice_date', '<=', $dateTo)->distinct()->get();
-
-        $mailPrice = $this->modelInvoice::select('invoice_price')->where('invoice_status', 2)->where('invoice_date', '>=', $dateFrom, 'AND', 'invoice_date', '<=', $dateTo)->distinct()->get()->sum('invoice_price');
 
         $sumPrice = $this->direct::whereIn('CampaignId', $compaignsId)->where('Date', '>=', $dateFrom, 'AND', 'Date', '<=', $dateTo)->get()->sum('Cost');
 
         $cpl = (int)$sumPrice / (int)$countCliks;
 
-        if(!($invoicesMail->count() + $invoicePhones->count())) {
+        $cpc = (int)$sumPrice / ($invoicesMail->count() + $invoicePhones->count());
 
-            $cpc = (int)$sumPrice / ($invoicesMail->count() + $invoicePhones->count());
-        }
-
-        $cpc = 0;
 
         return [
                 'entryPoints' => $entryPoints,
@@ -296,10 +288,10 @@ abstract class ChartController extends Controller
                     'cpc' => number_format($cpc, 2, '.', ''),
                     'invoices' => $invoicesMail->count() + $invoicePhones->count(),
                     'visits' => $countCliks,
-                    'invoicesMail' => $invoicesMail->count(),
-                    'invoicePhones' => $invoicePhones->count(),
-                    'mailPrice' => number_format($mailPrice, 2, '.', ''),
-                    'phonePrice' => number_format($phonesPrice, 2, '.', ''),
+                    'invoicesMail' => $countMail,
+                    'invoicePhones' => $countPhone,
+                    'mailPrice' => number_format($sumPriceForMails, 2, '.', ''),
+                    'phonePrice' => number_format($sumPriceForCalls, 2, '.', ''),
                     ]
             ];
     }

@@ -93,15 +93,14 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
             })
 
             setCastopMetric({
-                ...castomMetric,
                 cpl: res.data.castomMetric.cpl,
                 cpc: res.data.castomMetric.cpc,
                 invoices: res.data.castomMetric.invoices,
                 visits: res.data.castomMetric.visits,
                 invoicesMail: res.data.castomMetric.invoicesMail,
                 invoicePhones: res.data.castomMetric.invoicePhones,
-                mailPhones: res.data.castomMetric.mailPrice,
-                phonePhones: res.data.castomMetric.phonePrice,
+                mailPrice: res.data.castomMetric.mailPrice,
+                phonePrice: res.data.castomMetric.phonePrice,
             })
 
             chart.data.labels = preparationOfPoints(res.data.entryPoints).map(point => point)
@@ -157,6 +156,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
 
         axios.post(route(routePath))
         .then(async res => {
+            console.log(res.data);
             
             setCastopMetric({
                 cpl: res.data.cpl,
@@ -165,8 +165,8 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                 visits: res.data.visits,
                 invoicesMail: res.data.invoicesMail,
                 invoicePhones: res.data.invoicePhones,
-                mailPhones: res.data.mailPrice,
-                phonePhones: res.data.phonePrice,
+                mailPrice: res.data.mailPrice,
+                phonePrice: res.data.phonePrice,
             })
             
         })

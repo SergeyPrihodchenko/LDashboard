@@ -42,7 +42,7 @@ export default function BasicTable({castomMetric}) {
               <TableCell align="center">{castomMetric.invoicesMail}</TableCell>
               <TableCell align="center">--</TableCell>
               <TableCell align="center">--</TableCell>
-              <TableCell align="center">{castomMetric.mailPhones}</TableCell>
+              <TableCell align="center">{castomMetric.mailPrice}</TableCell>
             </TableRow>
             <TableRow
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -52,7 +52,7 @@ export default function BasicTable({castomMetric}) {
               <TableCell align="center">{castomMetric.invoicePhones}</TableCell>
               <TableCell align="center">--</TableCell>
               <TableCell align="center">--</TableCell>
-              <TableCell align="center">{castomMetric.phonePhones}</TableCell>
+              <TableCell align="center">{castomMetric.phonePrice}</TableCell>
             </TableRow>
         </TableBody>
       </Table>
