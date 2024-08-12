@@ -9,9 +9,9 @@ class WikaInvoice extends Model
 {
     use HasFactory;
 
-    // protected $connection = 'wika';
+    protected $connection = 'wika';
 
-    // protected $table = 'InvoiceList';
+    protected $table = 'InvoiceList';
 
-    protected $table = 'fluidline_wika_InvoiceList';
+    // protected $table = 'fluidline_wika_InvoiceList';
 }

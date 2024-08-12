@@ -114,6 +114,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
     const [chart, setChart] = useState('')
     const [titleSite, setTitleSite] = useState(title)
     const [dateUpdate, setDateUpdate] = useState(dateUpdateDirect)
+    const [castomMetric, setCastopMetric] = useState(false)
 
     const fetchDirect = () => {
 
@@ -140,6 +141,45 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
         axios.post(route(routePath))
         .then(async res => {
             setDirect(res.data)
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
+    const fetchCastomMetric = () => {
+
+        let routePath = ''
+
+        switch (titleSite) {            
+            case 'wika':
+                routePath = 'chart.wika.castom'
+                break;
+
+            case 'swagelo':
+                routePath = 'chart.swagelo.castom'
+                break;
+
+            case 'hylok':
+                routePath = 'chart.hylok.castom'
+                break;
+
+            case 'hy-lok':
+                routePath = 'chart.hy-lok.castom'
+                break;
+        }
+
+        axios.post(route(routePath))
+        .then(async res => {
+            console.log(res.data);
+            
+            setCastopMetric({
+                cpl: res.data.cpl,
+                cpc: res.data.cpc,
+                invoices: res.data.invoices,
+                visits: res.data.visits
+            })
+            
         })
         .catch(err => {
             console.log(err);
@@ -188,6 +228,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
     useEffect(() => {
         load(dataEntryPoints, dataMail, dataPhone)
         fetchDirect()
+        fetchCastomMetric()
     }, [])
 
     return (
@@ -253,10 +294,18 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                     </div>
                 </Grid>
             </Grid>
-            <Grid container padding={'15px 0'} border={'solid 1px'}>
-                <Grid item xs={12}>
-                        <h1>test</h1>
+            <hr style={{margin: '10px 0'}}/>
+            <Grid container padding={'10px 0'}  margin={'10px'}>
+                {!castomMetric ? <Skeleton width={'100%'} height={50}/>:
+                    <Grid item xs={12}>
+                    <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
+                        <Box>CPC: {castomMetric.cpc}</Box>
+                        <Box>CPL: {castomMetric.cpl}</Box>
+                        <Box>Клиентов: {castomMetric.invoices}</Box>
+                        <Box>Визиты: {castomMetric.visits}</Box>
+                    </Box>
                 </Grid>
+                }
             </Grid>
         </Guest>
     );

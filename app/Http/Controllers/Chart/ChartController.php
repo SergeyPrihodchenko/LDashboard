@@ -41,7 +41,7 @@ abstract class ChartController extends Controller
     {
         $dateUpdateDirect = $this->updateDirect::select(['date_check_update'])->limit(1)->get()->toArray()[0]['date_check_update'];
 
-        $dataWikaInvoice = $this->modelInvoice::select('invoice_date', 'invoice_status', 'client_mail_id', 'invoice_price')->distinct()->get();
+        $dataInvoice = $this->modelInvoice::select('invoice_date', 'invoice_status', 'client_mail_id', 'invoice_price')->distinct()->get();
 
         $sateliPhone = $this->sateliPhone::select('client_phone', 'invoice_status', 'invoice_price', 'invoice_date')->get();
  
@@ -69,8 +69,8 @@ abstract class ChartController extends Controller
         $countMail = 0;
         $sumPriceForMails = 0.00;
 
-        foreach ($dataWikaInvoice as $key => $value) {
-            $dataWikaInvoice[$key]['invoice_date'] = date('Y-m-d', strtotime($value['invoice_date']));
+        foreach ($dataInvoice as $key => $value) {
+            $dataInvoice[$key]['invoice_date'] = date('Y-m-d', strtotime($value['invoice_date']));
             $countMail++;
             if(!isset($chartMail[$value['invoice_date']])) {
                 $entryPoints[] = date('Y-m-d', strtotime($value['invoice_date']));
@@ -79,7 +79,7 @@ abstract class ChartController extends Controller
                 $chartMail[$value['invoice_date']]++;
             }
             if($value['invoice_status'] == 2) {
-                $sumPriceForMails = $sumPriceForMails + $dataWikaInvoice[$key]['invoice_price'];
+                $sumPriceForMails = $sumPriceForMails + $dataInvoice[$key]['invoice_price'];
             }
         }
 
@@ -159,7 +159,7 @@ abstract class ChartController extends Controller
         $dateTo = date('Y-m-d', strtotime($validated['dateTo']));
         $entryPoints = [];
 
-        $dataWikaInvoice = $this->modelInvoice::select('invoice_date', 'invoice_status', 'client_mail_id', 'invoice_price')
+        $dataInvoice = $this->modelInvoice::select('invoice_date', 'invoice_status', 'client_mail_id', 'invoice_price')
         ->where([
             ['invoice_date', '>', "$dateFrom 00:00:00"],
             ['invoice_date', '<', "$dateTo 23:59:59"]
@@ -188,7 +188,7 @@ abstract class ChartController extends Controller
         $countMail = 0;
         $sumPriceForMails = 0.00;
         $chartInvoice = [];
-        foreach ($dataWikaInvoice as $key => $dateInvoice) {
+        foreach ($dataInvoice as $key => $dateInvoice) {
             $countMail++;
             $entryPoints[] = date('Y-m-d', strtotime($dateInvoice['invoice_date']));
             if(array_key_exists(date('Y-m-d', strtotime($dateInvoice['invoice_date'])), $chartInvoice)) {
@@ -197,7 +197,7 @@ abstract class ChartController extends Controller
                 $chartInvoice[date('Y-m-d', strtotime($dateInvoice['invoice_date']))] = 1;
             }
             if($dateInvoice['invoice_status'] == 2) {
-                $sumPriceForMails += $dataWikaInvoice[$key]['invoice_price'];
+                $sumPriceForMails += $dataInvoice[$key]['invoice_price'];
             }
         }
 
@@ -284,9 +284,33 @@ abstract class ChartController extends Controller
         $fromDate = date('Y-m-d', strtotime($this->direct::select(['Date'])->whereIn('CampaignId', $compaignsId)->limit(1)->get()->toArray()[0]['Date']));
         $toDate = date('Y-m-d', strtotime($this->direct::select(['Date'])->whereIn('CampaignId', $compaignsId)->orderByRaw('Date DESC')->limit(1)->get()->toArray()[0]['Date']));
 
-        $metricData = $this->yandex->metricVisits($fromDate, $toDate);
+        $metricData = $this->yandex->metricVisits($fromDate, $toDate)['data'];
 
-        return $metricData['data'];
+        $countVisits = $this->prepareMetricVisits($metricData);
+
+        $invoicePhone = $this->modelPhone::select('contact_phone_number')->distinct()->get();
+
+        $phones = [];
+        foreach ($invoicePhone as $value) {
+            $phones[] = mb_substr($value['contact_phone_number'], 1, strlen($value['contact_phone_number']) - 1);
+        }
+
+        $invoicePhones = $this->sateliPhone::whereIn('client_phone', $phones)->distinct()->get('client_phone')->count();
+
+        $invoices = $this->modelInvoice::select('client_mail')->distinct()->get()->count();
+
+        $sumPrice = $this->direct::whereIn('CampaignId', $compaignsId)->sum('Cost');
+
+        $cpl = (int)$sumPrice / (int)$countVisits;
+
+        $cpc = (int)$sumPrice / ($invoices + $invoicePhones);
+
+        return [
+            'cpl' => number_format($cpl, 2, '.', ''),
+            'cpc' => number_format($cpc, 2, '.', ''),
+            'invoices' => $invoices + $invoicePhones,
+            'visits' => $countVisits
+            ];
     }
 
     private function parserForMetricByCompaign(array $metrics): array
@@ -306,6 +330,13 @@ abstract class ChartController extends Controller
 
             $data[] = $compaignId;
         }
+
+        return $data;
+    }
+
+    private function prepareMetricVisits($metric): int
+    {
+        $data = $metric[0]['metrics'][0];
 
         return $data;
     }
