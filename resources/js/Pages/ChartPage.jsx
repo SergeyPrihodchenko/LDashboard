@@ -33,6 +33,8 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
         ]
         chart.update()
         setInvoiceData(generalData)
+        setCastopMetric(false)
+        fetchCastomMetric()
     }
 
     const parse = (chartData) => {
@@ -59,7 +61,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
         data.set('dateFrom', dateFrom)
         data.set('dateTo', dateTo)
 
-        let routePath = switchRoute();
+        let routePath = '';
 
         switch (titleSite) {            
             case 'wika':
@@ -81,11 +83,25 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
 
         axios.post(route(routePath), data)
         .then(res => {
+            console.log(res.data);
+            
             setInvoiceData({...invoiveData, 
                 countMails: res.data.countMails,
                 sumPriceForMails: res.data.sumPriceForMails,
                 countCalls: res.data.countCalls,
                 sumPriceForCalls: res.data.sumPriceForCalls
+            })
+
+            setCastopMetric({
+                ...castomMetric,
+                cpl: res.data.castomMetric.cpl,
+                cpc: res.data.castomMetric.cpc,
+                invoices: res.data.castomMetric.invoices,
+                visits: res.data.castomMetric.visits,
+                invoicesMail: res.data.castomMetric.invoicesMail,
+                invoicePhones: res.data.castomMetric.invoicePhones,
+                mailPhones: res.data.castomMetric.mailPrice,
+                phonePhones: res.data.castomMetric.phonePrice,
             })
 
             chart.data.labels = preparationOfPoints(res.data.entryPoints).map(point => point)
@@ -117,37 +133,6 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
     const [dateUpdate, setDateUpdate] = useState(dateUpdateDirect)
     const [castomMetric, setCastopMetric] = useState(false)
 
-    const fetchDirect = () => {
-
-        let routePath = ''
-
-        switch (titleSite) {            
-            case 'wika':
-                routePath = 'chart.wika.direct'
-                break;
-
-            case 'swagelo':
-                routePath = 'chart.swagelo.direct'
-                break;
-
-            case 'hylok':
-                routePath = 'chart.hylok.direct'
-                break;
-
-            case 'hy-lok':
-                routePath = 'chart.hy-lok.direct'
-                break;
-        }
-
-        axios.post(route(routePath))
-        .then(async res => {
-            setDirect(res.data)
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
-
     const fetchCastomMetric = () => {
 
         let routePath = ''
@@ -172,7 +157,6 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
 
         axios.post(route(routePath))
         .then(async res => {
-            console.log(res.data);
             
             setCastopMetric({
                 cpl: res.data.cpl,
@@ -232,7 +216,7 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
 
     useEffect(() => {
         load(dataEntryPoints, dataMail, dataPhone)
-        fetchDirect()
+        // fetchDirect()
         fetchCastomMetric()
     }, [])
 
@@ -246,18 +230,16 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                         <CalendarComponent lable={'Конец периода'} dateChange={toDateChange}/>
                         <Box sx={{display: 'flex', flexDirection: 'column', flexGrow: '8px', rowGap: .5, padding: '4px' }}>
                             <Button variant='contained' color='primary' onClick={switchData}>Просмотреть</Button>
-                            <Button variant='contained' color='primary' onClick={reset}>Обновить<RestartAlt/></Button>
+                            <Button variant='contained' color='primary' onClick={reset}>Сбросить<RestartAlt/></Button>
                         </Box>
                         {dateError ? <Alert severity='error'>Не корректный диапазон даты</Alert> : ''}
                 </Container>
                 <hr style={{marginTop: '15px'}}/>
             </Grid>
             <Grid container>
-                <Grid item xs={2}>
-                <Grid container height={'100%'}>
-                <Grid item xs={12}>
-                    <Box className='present_data_box'>
-                       <Box borderRight={'solid 1px'} paddingRight={'5px'} maxWidth={'250px'} width={'100%'}>
+                <Grid item xs={6}>
+                    <Box className='present_data_box' padding={'15px 0'} alignItems={'center'}>
+                       <Box paddingRight={'5px'} maxWidth={'250px'} width={'100%'}>
                         <Typography variant='h6'>Письма</Typography>
                         <Typography>
                                 <span className='titile_header'>общее количество писем: </span>{invoiveData.countMails}
@@ -266,7 +248,11 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                                 <span className='titile_header'>сумма оплаченных счетов: </span>{invoiveData.sumPriceForMails}
                             </Typography>
                        </Box>
-                        <Box borderRight={'solid 1px'} paddingRight={'5px'} maxWidth={'250px'} width={'100%'}>
+                    </Box>
+                </Grid>
+                <Grid item xs={6}>
+                    <Box className='present_data_box' padding={'15px 0'} alignItems={'center'}>
+                        <Box paddingRight={'5px'} maxWidth={'250px'} width={'100%'}>
                             <Typography variant='h6'>Звонки</Typography>
                             <Typography>
                                 <span className='titile_header'>общее количество звонков: </span>{invoiveData.countCalls}
@@ -275,33 +261,19 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                                 <span className='titile_header'>сумма оплаченных счетов: </span>{invoiveData.sumPriceForCalls}
                             </Typography>
                         </Box>
-                        {!direct ? <Box><Skeleton width={250} height={135}/></Box> : 
-                        <Box borderRight={'solid 1px'} paddingRight={'5px'} maxWidth={'250px'} width={'100%'}>
-                            <Typography variant='h6'>Директ</Typography>
-                            <Typography>
-                               с {direct.fromDate} по {direct.toDate} 
-                            </Typography>
-                            <Typography>
-                                <span className='titile_header'>общее количество кликов: </span>{direct.countCliks}
-                            </Typography>
-                            <Typography>
-                                <span className='titile_header'>общая сумма за клики: </span>{direct.sumPrice}
-                            </Typography>
-                        </Box>
-                        }
                     </Box>
                 </Grid>
-                </Grid>
-                </Grid>
-                <Grid item xs={10}>
+            </Grid>
+            <hr style={{margin: '10px 0'}}/>
+            <Grid container>
+                <Grid item xs={12}>
                     <div>
                         <canvas style={{width: '1400px', height: '500px', margin: '0 auto'}} ref={chartRef} id="acquisitions"></canvas>
                     </div>
                 </Grid>
             </Grid>
-            <hr style={{margin: '10px 0'}}/>
             <Grid container padding={'10px 0'}  margin={'10px'}>
-                {!castomMetric ? <Skeleton width={'100%'} height={50}/>:
+                {!castomMetric ? <Skeleton width={'100%'} height={250}/>:
                     <Grid item xs={12}>
                         <BasicTable castomMetric={castomMetric}/>
                     </Grid>

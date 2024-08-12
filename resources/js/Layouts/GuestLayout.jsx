@@ -15,11 +15,11 @@ export default function Guest({ children, dateUpdateDirect, updateDirectDate }) 
                         {children}
                     </Grid>
                 </Grid>
-                <Grid container sx={{width: '100%'}} className='footer'>
+                {/* <Grid container sx={{width: '100%'}} className='footer'>
                     <Grid item xs={12}>
                         <h1>footer</h1>
                     </Grid>
-                </Grid>
+                </Grid> */}
             </Grid>
         </Grid>
     );

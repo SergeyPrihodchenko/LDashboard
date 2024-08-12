@@ -14,7 +14,7 @@ export default function BasicTable({castomMetric}) {
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650, padding: '15px 0' }} aria-label="simple table">
         <TableHead>
-          <TableRow>
+          <TableRow sx={{background: 'rgba(1,87,155,.6)'}}>
             <TableCell align="left"></TableCell>
             <TableCell align="center">Визиты</TableCell>
             <TableCell align="center">Заявки</TableCell>

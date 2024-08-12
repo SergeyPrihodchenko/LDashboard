@@ -249,6 +249,40 @@ abstract class ChartController extends Controller
             }
         }
 
+
+
+
+
+        $compaignsId = $this->parserForMetricByCompaign($this->yandex->metricIdCompaign()['data']);
+
+        $countCliks = $this->direct::whereIn('CampaignId', $compaignsId)->where('Date', '>=', $dateFrom, 'AND', 'Date', '<=', $dateTo)->get('Clicks')->sum('Clicks');
+
+        $invoicePhone = $this->modelPhone::select('contact_phone_number')->where('notification_time', '=>', $dateFrom, 'AND', 'notification_time', '<=', $dateTo)->distinct()->get();
+
+        $phones = [];
+        foreach ($invoicePhone as $value) {
+            $phones[] = mb_substr($value['contact_phone_number'], 1, strlen($value['contact_phone_number']) - 1);
+        }
+
+        $invoicePhones = $this->sateliPhone::whereIn('client_phone', $phones)->distinct()->get('client_phone', 'invoice_status', 'invoice_price');
+
+        $phonesPrice = $this->sateliPhone::whereIn('client_phone', $phones)->distinct()->get('invoice_price')->where('invoice_status', 2)->sum('invoice_price');
+
+        $invoicesMail = $this->modelInvoice::select('client_mail', 'invoice_status', 'invoice_price')->where('invoice_date', '>=', $dateFrom, 'AND', 'invoice_date', '<=', $dateTo)->distinct()->get();
+
+        $mailPrice = $this->modelInvoice::select('invoice_price')->where('invoice_status', 2)->where('invoice_date', '>=', $dateFrom, 'AND', 'invoice_date', '<=', $dateTo)->distinct()->get()->sum('invoice_price');
+
+        $sumPrice = $this->direct::whereIn('CampaignId', $compaignsId)->where('Date', '>=', $dateFrom, 'AND', 'Date', '<=', $dateTo)->get()->sum('Cost');
+
+        $cpl = (int)$sumPrice / (int)$countCliks;
+
+        if(!($invoicesMail->count() + $invoicePhones->count())) {
+
+            $cpc = (int)$sumPrice / ($invoicesMail->count() + $invoicePhones->count());
+        }
+
+        $cpc = 0;
+
         return [
                 'entryPoints' => $entryPoints,
                 'chartPhone' => $newChartPhone,
@@ -257,9 +291,20 @@ abstract class ChartController extends Controller
                 'countCalls' => $countPhone,
                 'sumPriceForCalls' => number_format($sumPriceForCalls, 2, '.', ''),
                 'sumPriceForMails' => number_format($sumPriceForMails, 2, '.', ''),
+                'castomMetric' => [
+                    'cpl' => number_format($cpl, 2, '.', ''),
+                    'cpc' => number_format($cpc, 2, '.', ''),
+                    'invoices' => $invoicesMail->count() + $invoicePhones->count(),
+                    'visits' => $countCliks,
+                    'invoicesMail' => $invoicesMail->count(),
+                    'invoicePhones' => $invoicePhones->count(),
+                    'mailPrice' => number_format($mailPrice, 2, '.', ''),
+                    'phonePrice' => number_format($phonesPrice, 2, '.', ''),
+                    ]
             ];
     }
 
+    // НЕ ИСПОЛЬЗУЕТСЯ
     public function fetchDirect()
     {
         $compaignsId = $this->parserForMetricByCompaign($this->yandex->metricIdCompaign()['data']);

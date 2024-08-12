@@ -32,8 +32,6 @@ export default function Header({dateUpdateDirect, updateDirectDate}) {
     })
   }
 
-console.log(updated);
-
   return (
     <Box sx={{ width: '100%', height: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: 'solid 1px'}}>
         <ButtonGroup variant='contained'>
