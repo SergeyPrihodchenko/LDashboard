@@ -6,6 +6,7 @@ import CalendarComponent from '@/Components/MUIComponents/Chart/CalendarComponen
 import ControlPanelComponent from '@/Components/Chart/ControlPanelComponent';
 import axios from 'axios';
 import { Alert, Box, Button, Container, Grid, Skeleton, Typography } from '@mui/material';
+import BasicTable from '@/Components/MUIComponents/Chart/TableComponent';
 
 const preparationOfPoints = (obj) => {
     const arr = []
@@ -177,7 +178,11 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
                 cpl: res.data.cpl,
                 cpc: res.data.cpc,
                 invoices: res.data.invoices,
-                visits: res.data.visits
+                visits: res.data.visits,
+                invoicesMail: res.data.invoicesMail,
+                invoicePhones: res.data.invoicePhones,
+                mailPhones: res.data.mailPrice,
+                phonePhones: res.data.phonePrice,
             })
             
         })
@@ -298,13 +303,8 @@ export default function ChartPage({chartPhone, chartMail, entryPoints, generalDa
             <Grid container padding={'10px 0'}  margin={'10px'}>
                 {!castomMetric ? <Skeleton width={'100%'} height={50}/>:
                     <Grid item xs={12}>
-                    <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
-                        <Box>CPC: {castomMetric.cpc}</Box>
-                        <Box>CPL: {castomMetric.cpl}</Box>
-                        <Box>Клиентов: {castomMetric.invoices}</Box>
-                        <Box>Визиты: {castomMetric.visits}</Box>
-                    </Box>
-                </Grid>
+                        <BasicTable castomMetric={castomMetric}/>
+                    </Grid>
                 }
             </Grid>
         </Guest>
