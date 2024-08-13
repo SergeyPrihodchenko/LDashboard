@@ -16,14 +16,13 @@ const checkUpdate = (date) => {
   }
 }
 
-
-
 export default function Header({dateUpdateDirect, updateDirectDate}) {
   const [updated, setUpdated] = React.useState(checkUpdate(dateUpdateDirect));
-
+  const [stateButton, setStateButton] = React.useState('success');
   const updateDirect = () => {
+    setStateButton('warning')
     axios.post(route('update.direct'))
-    .then(res => {
+    .then(res => {      
       updateDirectDate(res.data.date)
       setUpdated(true)
     })
@@ -41,7 +40,7 @@ export default function Header({dateUpdateDirect, updateDirectDate}) {
         </ButtonGroup>
         <Box sx={{display: 'flex', gap: 1}}>
           <Typography variant="h6" gutterBottom color={'white'} maxWidth={'290px'}>Дата последнего обновления: {dateUpdateDirect}</Typography>
-          <Button disabled={updated} variant='contained' color='success' onClick={updateDirect}>
+          <Button disabled={updated} variant='contained' color={stateButton} onClick={updateDirect}>
           {
             updated ? <PublishedWithChanges sx={{'&, svg': {fontSize: '40px'}}}/> : <Sync sx={{'&, svg': {fontSize: '40px'}}}/>
           }

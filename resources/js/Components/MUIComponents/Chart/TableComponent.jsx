@@ -16,11 +16,11 @@ export default function BasicTable({castomMetric}) {
         <TableHead>
           <TableRow sx={{background: 'rgba(1,87,155,.6)'}}>
             <TableCell align="left"></TableCell>
-            <TableCell align="center">Визиты</TableCell>
-            <TableCell align="center">Заявки</TableCell>
-            <TableCell align="center">CPL</TableCell>
-            <TableCell align="center">CPC</TableCell>
-            <TableCell align="center">Cумма оплаченных счетов</TableCell>
+            <TableCell align="center"><span style={{fontSize: '18px'}}>Визиты</span></TableCell>
+            <TableCell align="center"><span style={{fontSize: '18px'}}>Заявки</span></TableCell>
+            <TableCell align="center"><span style={{fontSize: '18px'}}>CPL</span></TableCell>
+            <TableCell align="center"><span style={{fontSize: '18px'}}>CPC</span></TableCell>
+            <TableCell align="center"><span style={{fontSize: '18px'}}>Cумма оплаченных счетов</span></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

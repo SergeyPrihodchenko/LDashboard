@@ -14,6 +14,17 @@ class UpdateDirectController extends Controller
 {
     public function initUpdateDirect()
     {
+        $status = UpdateDirect::where('direct_id', UpdateDirect::HYLOK)->limit(1)->get('conf_update_status')[0]['conf_update_status'];
+
+        if($status) {
+            return [
+                'date' => UpdateDirect::select(['date_check_update'])->limit(1)->get()->toArray()[0]['date_check_update'],
+                'status' => false
+            ];
+        }
+
+        UpdateDirect::where('direct_id', UpdateDirect::HYLOK)->update(['conf_update_status' => 1]);
+
         $dateTo = strtotime(date('Y-m-d'));
         $params = [];
         $dateUpdateHylok = strtotime(UpdateDirect::where('direct_id', UpdateDirect::HYLOK)->get('date_check_update')->toArray()[0]['date_check_update']);
@@ -58,7 +69,12 @@ class UpdateDirectController extends Controller
             }
         }
 
-        return ['date' => UpdateDirect::select(['date_check_update'])->limit(1)->get()->toArray()[0]['date_check_update']];
+        UpdateDirect::where('direct_id', 1)->update(['conf_update_status' => 0]);
+
+        return [
+            'date' => UpdateDirect::select(['date_check_update'])->limit(1)->get()->toArray()[0]['date_check_update'],
+            'status' => true
+        ];
     }
 
     private function updateDirect($value, $clientLogin, $authToken, $title)
