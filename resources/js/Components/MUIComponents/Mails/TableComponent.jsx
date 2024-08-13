@@ -49,6 +49,14 @@ const columns = [
   },
 ];
 
+function maskEmailAddress(email) {
+  const [username, domain] = email.split("@");
+  
+  const maskedDomain = domain.replace(/./g, "*");
+  
+  return `${username}@${maskedDomain}`;
+}
+
 
 const converter = (data) => {
 
@@ -79,7 +87,8 @@ const converter = (data) => {
 
   for(let key in obj) {
     newData.push({
-      mail: key,
+      id: key,
+      mail: maskEmailAddress(key),
       created: obj[key].created,
       actived: obj[key].actived,
       closed: obj[key].closed,
@@ -133,7 +142,6 @@ export default function TableComponent({data}) {
     };
 
     const fetch = (mail) => {
-
       setOpen(true)
       setSkeleton(false)
       const data = new FormData
@@ -151,14 +159,10 @@ export default function TableComponent({data}) {
         case 'hylok':
           routePath = 'hylok.general'
           break;
-      
-        default:
-          break;
       }
 
       axios.post(route(routePath), data)
       .then(res => {
-        console.log(res.data);
         setSkeleton(true)
         setDataModal({
           ...dataModal, 
@@ -167,7 +171,7 @@ export default function TableComponent({data}) {
             title: dataModal.headers.title,
             code: res.data.client_code,
             id: res.data.client_id,
-            mail: res.data.client_mail,
+            mail: maskEmailAddress(res.data.client_mail),
             ym_uid: res.data.client_ym_uid ?? 'отсутствует',
             countClicks: res.data.countClicks ?? 'отсутствует',
             costClicks: res.data.costClicks ?? 'отсутствует',
@@ -215,9 +219,9 @@ export default function TableComponent({data}) {
               <TableBody>
                 {rows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, key) => {
+                  .map((row, key) => {                    
                     return (
-                      <TableRow hover role="checkbox" tabIndex={-1} key={key} sx={{cursor: 'pointer'}} onClick={() => fetch(row.mail)}>
+                      <TableRow hover role="checkbox" tabIndex={-1} key={key} sx={{cursor: 'pointer'}} onClick={() => fetch(row.id)}>
                         {columns.map((column) => {
                           const value = row[column.id];
                           return (
