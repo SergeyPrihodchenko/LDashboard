@@ -23,6 +23,8 @@ export default function Header({dateUpdateDirect, updateDirectDate}) {
     setStateButton('warning')
     axios.post(route('update.direct'))
     .then(res => {      
+      console.log(res.data);
+      
       updateDirectDate(res.data.date)
       setUpdated(true)
     })

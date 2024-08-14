@@ -19,7 +19,7 @@ class UpdateDirectController extends Controller
         if($status) {
             return [
                 'date' => UpdateDirect::select(['date_check_update'])->limit(1)->get()->toArray()[0]['date_check_update'],
-                'status' => false
+                'status' => false,
             ];
         }
 
